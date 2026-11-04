@@ -932,7 +932,8 @@
         </div>
       </div>
       <div class="header-actions">
-        <button class="btn btn-primary" type="button" data-goto="tab-casos">Explorar casos</button>
+        <button class="btn btn-primary" type="button" data-goto="tab-dashboards">Dashboards Power BI</button>
+        <button class="btn" type="button" data-goto="tab-casos">Explorar casos</button>
         <button class="btn" type="button" id="printDoc">Imprimir</button>
         <button class="btn btn-quiet" type="button" id="copyLink">Copiar enlace</button>
       </div>
@@ -942,9 +943,10 @@
     <nav class="tabs-nav" role="tablist" aria-label="Módulos del documento">
       <button class="tab-button" id="tab-presentacion" type="button" role="tab" aria-selected="true" aria-controls="panel-presentacion" tabindex="0">01 · Presentación</button>
       <button class="tab-button" id="tab-casos" type="button" role="tab" aria-selected="false" aria-controls="panel-casos" tabindex="-1">02 · Casos documentados</button>
-      <button class="tab-button" id="tab-metodos" type="button" role="tab" aria-selected="false" aria-controls="panel-metodos" tabindex="-1">03 · Métodos y arquitectura</button>
-      <button class="tab-button" id="tab-recursos" type="button" role="tab" aria-selected="false" aria-controls="panel-recursos" tabindex="-1">04 · Recursos y referencias</button>
-      <button class="tab-button" id="tab-perfil" type="button" role="tab" aria-selected="false" aria-controls="panel-perfil" tabindex="-1">05 · Perfil y contacto</button>
+      <button class="tab-button" id="tab-dashboards" type="button" role="tab" aria-selected="false" aria-controls="panel-dashboards" tabindex="-1">03 · Dashboards Power BI</button>
+      <button class="tab-button" id="tab-metodos" type="button" role="tab" aria-selected="false" aria-controls="panel-metodos" tabindex="-1">04 · Métodos y arquitectura</button>
+      <button class="tab-button" id="tab-recursos" type="button" role="tab" aria-selected="false" aria-controls="panel-recursos" tabindex="-1">05 · Recursos y referencias</button>
+      <button class="tab-button" id="tab-perfil" type="button" role="tab" aria-selected="false" aria-controls="panel-perfil" tabindex="-1">06 · Perfil y contacto</button>
     </nav>
 
     <main id="contenido">
@@ -1157,6 +1159,36 @@
 
         <div class="callout">
           <p><strong>Nota metodológica.</strong> Las cifras y resultados corresponden a los contextos descritos en cada ficha. No deben interpretarse como benchmarks generales ni como garantía de rendimiento en otros entornos.</p>
+        </div>
+      </section>
+
+      <section class="tab-content" id="panel-dashboards" role="tabpanel" aria-labelledby="tab-dashboards" tabindex="0" hidden>
+        <h2>Dashboards Power BI</h2>
+        <p class="panel-intro">Tableros interactivos desarrollados en Power BI para explorar indicadores operativos y de negocio. Cada tarjeta abre el dashboard correspondiente en una vista dedicada; el listado se irá ampliando con nuevos tableros.</p>
+
+        <div class="case-grid" id="dashboardGrid">
+          <article class="case-card" data-category="inventarios">
+            <div class="case-top">
+              <span class="case-num">01</span>
+              <span class="tag">Inventarios</span>
+              <span class="case-year">2026</span>
+            </div>
+            <h3>Comportamiento inventarios</h3>
+            <p>Dashboard de comportamiento de almacenamiento e inventarios: vejez de envíos, semaforización, bodegas, procesos y clientes.</p>
+            <div class="tag-list">
+              <span class="tag">Power BI</span>
+              <span class="tag">Inventarios</span>
+              <span class="tag">Almacenamiento</span>
+              <span class="tag">Semaforización</span>
+            </div>
+            <div class="case-actions">
+              <a class="btn btn-small btn-primary" href="Inventarios.html">Abrir dashboard</a>
+            </div>
+          </article>
+        </div>
+
+        <div class="callout">
+          <p><strong>Próximamente.</strong> Este espacio centraliza los dashboards de Power BI. A medida que se desarrollen nuevos tableros, se anexarán a este mismo listado con su respectivo enlace de acceso.</p>
         </div>
       </section>
 
@@ -1503,7 +1535,7 @@
       }
 
       const filterButtons = Array.from(document.querySelectorAll('.filter'));
-      const caseCards = Array.from(document.querySelectorAll('.case-card'));
+      const caseCards = Array.from(document.querySelectorAll('#caseGrid .case-card'));
       const searchInput = document.getElementById('caseSearch');
       const caseCount = document.getElementById('caseCount');
       const caseEmpty = document.getElementById('caseEmpty');
