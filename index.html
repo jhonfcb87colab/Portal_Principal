@@ -1,0 +1,1823 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="Compendio abierto de notas, métodos y casos documentados sobre ingeniería de datos: T-SQL, automatización, arquitecturas Medallion y analítica.">
+  <title>Ingeniería de datos · Notas y casos documentados</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%23FFFAFA' stroke='%23B0C4DE' stroke-width='3'/%3E%3Ctext x='32' y='42' font-family='Arial' font-size='24' font-weight='600' fill='%23000000' text-anchor='middle'%3Ejf%3C/text%3E%3C/svg%3E">
+  <style>
+    :root {
+      --bg: #FFFAFA;
+      --surface: #FFFFFF;
+      --surface-tab: #FAF0E6;
+      --surface-tab-active: #FFFFE0;
+      --surface-panel: #F5FFFA;
+      --surface-note: #FFFFE0;
+      --border: #B0C4DE;
+      --border-soft: #B0E0E6;
+      --accent: #7FFFD4;
+      --ink: #000000;
+      --ink-soft: #333333;
+      --ink-muted: #555555;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      background-color: var(--bg);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    a {
+      color: var(--ink);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    a:hover {
+      text-decoration-thickness: 2px;
+    }
+
+    button {
+      font-family: inherit;
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--border);
+      outline-offset: 2px;
+    }
+
+    .skip-link {
+      position: absolute;
+      top: -60px;
+      left: 16px;
+      z-index: 10;
+      padding: 8px 12px;
+      border: 2px solid var(--border);
+      background: var(--surface);
+      font-size: 13px;
+    }
+
+    .skip-link:focus {
+      top: 16px;
+    }
+
+    .main-container {
+      width: 100%;
+      max-width: 1040px;
+      padding: 24px;
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      background-color: var(--surface);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    }
+
+    .doc-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 18px;
+      padding-bottom: 18px;
+      border-bottom: 2px solid var(--border-soft);
+    }
+
+    .doc-label {
+      margin: 0 0 8px;
+      color: var(--ink-muted);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .doc-header h1 {
+      margin: 0 0 8px;
+      font-size: 26px;
+      font-weight: 600;
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+    }
+
+    .doc-subtitle {
+      max-width: 70ch;
+      margin: 0;
+      color: var(--ink-soft);
+      font-size: 14px;
+    }
+
+    .doc-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px 18px;
+      margin-top: 12px;
+      color: var(--ink-muted);
+      font-size: 12px;
+    }
+
+    .doc-meta strong {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .header-actions {
+      display: flex;
+      flex: 0 0 auto;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      background-color: var(--surface-tab);
+      color: var(--ink);
+      font-size: 13px;
+      line-height: 1.2;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .btn:hover {
+      border-color: var(--accent);
+      background-color: var(--surface-tab-active);
+    }
+
+    .btn-primary {
+      background-color: var(--surface-tab-active);
+      font-weight: 600;
+    }
+
+    .btn-quiet {
+      background-color: var(--surface);
+    }
+
+    .btn-small {
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+
+    .tabs-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 18px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .tab-button {
+      padding: 10px 16px;
+      border: 1px solid var(--border);
+      border-bottom: none;
+      border-radius: 4px 4px 0 0;
+      background-color: var(--surface-tab);
+      color: var(--ink);
+      font-size: 13px;
+      line-height: 1.2;
+      cursor: pointer;
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .tab-button:hover {
+      border-color: var(--accent);
+      background-color: var(--surface-tab-active);
+    }
+
+    .tab-button[aria-selected="true"] {
+      margin-bottom: -2px;
+      padding: 9px 15px;
+      border: 2px solid var(--border);
+      border-bottom: 2px solid var(--surface-tab-active);
+      background-color: var(--surface-tab-active);
+      font-weight: 600;
+    }
+
+    .tab-content {
+      padding: 20px;
+      border: 1px solid var(--border-soft);
+      border-radius: 4px;
+      background-color: var(--surface-panel);
+    }
+
+    .tab-content h2 {
+      margin: 0 0 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--accent);
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .tab-content h3 {
+      margin: 0 0 6px;
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1.35;
+    }
+
+    .tab-content h4 {
+      margin: 0 0 6px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .panel-intro {
+      max-width: 75ch;
+      margin: 0 0 18px;
+      color: var(--ink-soft);
+    }
+
+    .kicker {
+      display: block;
+      margin: 0 0 6px;
+      color: var(--ink-muted);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .grid-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .card {
+      padding: 16px;
+      border: 1px solid var(--border-soft);
+      border-radius: 4px;
+      background-color: var(--surface);
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--ink-soft);
+      font-size: 13px;
+    }
+
+    .card p + p {
+      margin-top: 8px;
+    }
+
+    .list {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--ink-soft);
+      font-size: 13px;
+    }
+
+    .list li {
+      margin: 4px 0;
+    }
+
+    .list li::marker {
+      color: var(--border);
+    }
+
+    .callout {
+      margin-top: 16px;
+      padding: 12px 14px;
+      border: 1px dashed var(--border);
+      background-color: var(--surface-note);
+      color: var(--ink-soft);
+      font-size: 13px;
+    }
+
+    .callout strong {
+      color: var(--ink);
+    }
+
+    .callout p {
+      margin: 0;
+    }
+
+    .callout p + p {
+      margin-top: 6px;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 12px;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 2px 7px;
+      border: 1px solid var(--border-soft);
+      border-radius: 3px;
+      background-color: var(--surface);
+      color: var(--ink-soft);
+      font-size: 11px;
+      line-height: 1.4;
+      white-space: nowrap;
+    }
+
+    details.note {
+      margin-top: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border-soft);
+      border-radius: 4px;
+      background-color: var(--surface);
+    }
+
+    details.note summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 11px 14px;
+      background-color: var(--surface-tab);
+      font-size: 13px;
+      font-weight: 600;
+      list-style: none;
+      cursor: pointer;
+    }
+
+    details.note summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details.note summary::after {
+      content: "+";
+      color: var(--ink-muted);
+      font-weight: 600;
+    }
+
+    details.note[open] summary::after {
+      content: "\2013";
+    }
+
+    details.note .note-body {
+      padding: 14px;
+      border-top: 1px solid var(--border-soft);
+      color: var(--ink-soft);
+      font-size: 13px;
+    }
+
+    details.note .note-body p {
+      margin: 0 0 8px;
+    }
+
+    details.note .note-body p:last-child {
+      margin-bottom: 0;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+      padding: 10px;
+      border: 1px solid var(--border-soft);
+      border-radius: 4px;
+      background-color: var(--surface);
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .filter {
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      background-color: var(--surface-tab);
+      color: var(--ink);
+      font-size: 12px;
+      line-height: 1.2;
+      cursor: pointer;
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .filter:hover {
+      border-color: var(--accent);
+      background-color: var(--surface-tab-active);
+    }
+
+    .filter[aria-pressed="true"] {
+      padding: 5px 9px;
+      border: 2px solid var(--border);
+      background-color: var(--surface-tab-active);
+      font-weight: 600;
+    }
+
+    .count {
+      margin-left: 2px;
+      color: var(--ink-muted);
+      font-size: 10px;
+    }
+
+    .search {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      height: 34px;
+      padding: 0 10px;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      background-color: var(--surface);
+    }
+
+    .search svg {
+      flex: 0 0 auto;
+      width: 14px;
+      height: 14px;
+      color: var(--ink-muted);
+    }
+
+    .search input {
+      width: 190px;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--ink);
+      font-family: inherit;
+      font-size: 13px;
+    }
+
+    .results {
+      margin: 0 0 12px;
+      color: var(--ink-muted);
+      font-size: 12px;
+    }
+
+    .results strong {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .case-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .case-card {
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      border: 1px solid var(--border-soft);
+      border-radius: 4px;
+      background-color: var(--surface);
+      transition: border-color 0.2s ease;
+    }
+
+    .case-card:hover {
+      border-color: var(--border);
+    }
+
+    .case-top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      color: var(--ink-muted);
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .case-num {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .case-year {
+      margin-left: auto;
+    }
+
+    .case-card h3 {
+      margin-bottom: 8px;
+    }
+
+    .case-card > p {
+      flex: 1;
+      margin: 0;
+      color: var(--ink-soft);
+      font-size: 13px;
+    }
+
+    .case-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-soft);
+    }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      padding: 28px;
+      border: 1px dashed var(--border);
+      background-color: var(--surface-note);
+      text-align: center;
+      font-size: 13px;
+    }
+
+    .empty-state p {
+      margin: 0 0 12px;
+      color: var(--ink-soft);
+    }
+
+    .flow {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 16px;
+      padding: 14px;
+      border: 1px solid var(--border-soft);
+      border-radius: 4px;
+      background-color: var(--surface);
+    }
+
+    .flow-step {
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      background-color: var(--surface-tab);
+      font-size: 12px;
+    }
+
+    .flow-arrow {
+      color: var(--ink-muted);
+      font-size: 12px;
+    }
+
+    .section-sub {
+      margin: 20px 0 10px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border-soft);
+      border-radius: 4px;
+      background-color: var(--surface);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th,
+    td {
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--border-soft);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background-color: var(--surface-tab);
+      font-weight: 600;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    td {
+      color: var(--ink-soft);
+    }
+
+    .profile {
+      padding: 18px;
+      border: 1px solid var(--border-soft);
+      border-radius: 4px;
+      background-color: var(--surface);
+    }
+
+    .profile-head {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 14px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .avatar {
+      display: grid;
+      place-items: center;
+      width: 52px;
+      height: 52px;
+      border: 2px solid var(--border);
+      border-radius: 4px;
+      background-color: var(--surface-tab-active);
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .profile-head h3 {
+      margin: 0 0 2px;
+    }
+
+    .profile-head p {
+      margin: 0;
+      color: var(--ink-soft);
+      font-size: 13px;
+    }
+
+    .profile .grid {
+      margin-top: 14px;
+    }
+
+    .doc-footer {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 22px;
+      padding-top: 14px;
+      border-top: 2px solid var(--border-soft);
+      color: var(--ink-muted);
+      font-size: 12px;
+    }
+
+    .doc-footer p {
+      margin: 0;
+    }
+
+    .action-status {
+      margin: 8px 0 0;
+      color: var(--ink-muted);
+      font-size: 12px;
+    }
+
+    dialog {
+      width: min(680px, calc(100% - 32px));
+      max-height: calc(100vh - 40px);
+      padding: 0;
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      background-color: var(--surface);
+      color: var(--ink);
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.18);
+    }
+
+    dialog::backdrop {
+      background-color: rgba(0, 0, 0, 0.35);
+    }
+
+    .modal-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 20px;
+      border-bottom: 2px solid var(--border-soft);
+      background-color: var(--surface-tab);
+    }
+
+    .modal-head h3 {
+      margin: 4px 0 0;
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .modal-head .kicker {
+      margin: 0;
+    }
+
+    .icon-btn {
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      background-color: var(--surface);
+      color: var(--ink);
+      font-size: 20px;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .icon-btn:hover {
+      border-color: var(--accent);
+      background-color: var(--surface-tab-active);
+    }
+
+    .modal-body {
+      max-height: 60vh;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .modal-section {
+      margin-bottom: 16px;
+    }
+
+    .modal-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .modal-section h4 {
+      margin: 0 0 6px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .modal-section p {
+      margin: 0;
+      color: var(--ink-soft);
+      font-size: 13px;
+    }
+
+    .modal-foot {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 14px 20px;
+      border-top: 1px solid var(--border-soft);
+      background-color: var(--surface);
+    }
+
+    body.modal-open {
+      overflow: hidden;
+    }
+
+    @media (max-width: 860px) {
+      .doc-header {
+        flex-direction: column;
+      }
+
+      .header-actions {
+        justify-content: flex-start;
+      }
+
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      body {
+        padding: 12px;
+      }
+
+      .main-container {
+        padding: 16px;
+      }
+
+      .doc-header h1 {
+        font-size: 22px;
+      }
+
+      .grid-2,
+      .case-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .toolbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .search {
+        width: 100%;
+      }
+
+      .search input {
+        width: 100%;
+      }
+
+      .tab-button {
+        padding: 9px 12px;
+        font-size: 12px;
+      }
+
+      .tab-button[aria-selected="true"] {
+        padding: 8px 11px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .doc-meta {
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .header-actions .btn {
+        flex: 1;
+      }
+
+      .tab-content {
+        padding: 16px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+
+    @media print {
+      body {
+        display: block;
+        padding: 0;
+      }
+
+      .main-container {
+        max-width: none;
+        padding: 0;
+        border: 0;
+        box-shadow: none;
+      }
+
+      .header-actions,
+      .tabs-nav,
+      .toolbar,
+      .case-actions,
+      .modal-foot,
+      .doc-footer,
+      .action-status {
+        display: none !important;
+      }
+
+      .tab-content,
+      .tab-content[hidden] {
+        display: block !important;
+        margin-bottom: 24px;
+        padding: 0;
+        border: 0;
+      }
+
+      .case-card[hidden] {
+        display: flex !important;
+      }
+
+      a {
+        text-decoration: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+  <div class="main-container">
+    <header class="doc-header">
+      <div>
+        <p class="doc-label">Documento abierto · Ingeniería de datos</p>
+        <h1>Notas y casos documentados sobre ingeniería de datos</h1>
+        <p class="doc-subtitle">Compendio de métodos, decisiones técnicas y resultados reproducibles en T-SQL, automatización y arquitecturas analíticas. Material de consulta y divulgación, sin fines comerciales.</p>
+        <div class="doc-meta">
+          <span><strong>Autor:</strong> Jhon Fernando Cruz</span>
+          <span><strong>Actualizado:</strong> 2026</span>
+          <span><strong>Formato:</strong> lectura por módulos</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-primary" type="button" data-goto="tab-casos">Explorar casos</button>
+        <button class="btn" type="button" id="printDoc">Imprimir</button>
+        <button class="btn btn-quiet" type="button" id="copyLink">Copiar enlace</button>
+      </div>
+    </header>
+    <p class="action-status" id="actionStatus" role="status" aria-live="polite"></p>
+
+    <nav class="tabs-nav" role="tablist" aria-label="Módulos del documento">
+      <button class="tab-button" id="tab-presentacion" type="button" role="tab" aria-selected="true" aria-controls="panel-presentacion" tabindex="0">01 · Presentación</button>
+      <button class="tab-button" id="tab-casos" type="button" role="tab" aria-selected="false" aria-controls="panel-casos" tabindex="-1">02 · Casos documentados</button>
+      <button class="tab-button" id="tab-metodos" type="button" role="tab" aria-selected="false" aria-controls="panel-metodos" tabindex="-1">03 · Métodos y arquitectura</button>
+      <button class="tab-button" id="tab-recursos" type="button" role="tab" aria-selected="false" aria-controls="panel-recursos" tabindex="-1">04 · Recursos y referencias</button>
+      <button class="tab-button" id="tab-perfil" type="button" role="tab" aria-selected="false" aria-controls="panel-perfil" tabindex="-1">05 · Perfil y contacto</button>
+    </nav>
+
+    <main id="contenido">
+      <section class="tab-content" id="panel-presentacion" role="tabpanel" aria-labelledby="tab-presentacion" tabindex="0">
+        <h2>Presentación</h2>
+        <p class="panel-intro">Este espacio reúne apuntes, procedimientos y casos de estudio sobre el trabajo con datos. La intención es documentar decisiones y aprendizajes de forma que puedan consultarse, discutirse o reutilizarse en otros contextos.</p>
+
+        <div class="grid grid-3">
+          <article class="card">
+            <span class="kicker">Objetivo</span>
+            <h3>Divulgar, no vender</h3>
+            <p>El contenido describe métodos y resultados. No presenta ofertas comerciales ni servicios; funciona como material de consulta abierta.</p>
+          </article>
+          <article class="card">
+            <span class="kicker">Estructura</span>
+            <h3>Lectura por módulos</h3>
+            <p>La información se organiza en pestañas para evitar páginas interminables. Cada módulo cubre un aspecto distinto del mismo tema.</p>
+          </article>
+          <article class="card">
+            <span class="kicker">Uso</span>
+            <h3>Cita y reutilización</h3>
+            <p>Los casos pueden citarse con atribución. Cuando exista un repositorio público, se enlaza como fuente primaria para revisar el detalle.</p>
+          </article>
+        </div>
+
+        <div class="callout">
+          <p><strong>Alcance.</strong> El documento no sustituye documentación oficial ni asesoría especializada. Su valor está en mostrar el razonamiento detrás de cada solución y en dejar explícitos los límites de los datos.</p>
+        </div>
+
+        <details class="note">
+          <summary>Criterios de documentación</summary>
+          <div class="note-body">
+            <ul class="list">
+              <li>Reproducibilidad: cada caso indica herramientas, entradas y pasos generales.</li>
+              <li>Contexto: se explica el problema antes de la solución.</li>
+              <li>Límites: se anotan supuestos, restricciones y resultados que no deben generalizarse.</li>
+              <li>Fuentes: los repositorios y la documentación externa se enlazan cuando están disponibles.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="note">
+          <summary>Temas cubiertos</summary>
+          <div class="note-body">
+            <div class="tag-list">
+              <span class="tag">T-SQL</span>
+              <span class="tag">SQL Server</span>
+              <span class="tag">Python</span>
+              <span class="tag">Pandas</span>
+              <span class="tag">DuckDB</span>
+              <span class="tag">SSIS</span>
+              <span class="tag">Power BI</span>
+              <span class="tag">Arquitectura Medallion</span>
+              <span class="tag">APIs REST</span>
+              <span class="tag">OCR</span>
+              <span class="tag">Machine learning</span>
+              <span class="tag">Automatización</span>
+            </div>
+          </div>
+        </details>
+      </section>
+
+      <section class="tab-content" id="panel-casos" role="tabpanel" aria-labelledby="tab-casos" tabindex="0" hidden>
+        <h2>Casos documentados</h2>
+        <p class="panel-intro">Seis ejercicios resumidos con contexto, método, resultados y aprendizajes. Usa los filtros o la búsqueda para localizar un tema; abre una ficha para leer el detalle sin salir de esta vista.</p>
+
+        <div class="toolbar">
+          <div class="filters" role="group" aria-label="Filtrar casos por área">
+            <button class="filter" type="button" data-filter="all" aria-pressed="true">Todos <span class="count">06</span></button>
+            <button class="filter" type="button" data-filter="data" aria-pressed="false">Datos y BI <span class="count">03</span></button>
+            <button class="filter" type="button" data-filter="ml" aria-pressed="false">ML e IA <span class="count">02</span></button>
+            <button class="filter" type="button" data-filter="web" aria-pressed="false">Web y APIs <span class="count">02</span></button>
+            <button class="filter" type="button" data-filter="automation" aria-pressed="false">Automatización <span class="count">03</span></button>
+          </div>
+          <label class="search">
+            <span class="kicker" hidden>Buscar casos</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+            <input id="caseSearch" type="search" placeholder="Buscar tecnología o tema" aria-label="Buscar casos por tecnología o tema">
+          </label>
+        </div>
+
+        <p class="results" aria-live="polite"><strong id="caseCount">06</strong> casos visibles</p>
+
+        <div class="case-grid" id="caseGrid">
+          <article class="case-card" data-category="ml data" data-search="tesis maestria ciencia datos prediccion sla ultima milla logistica sql server databricks duckdb xgboost lightgbm random forest shap">
+            <div class="case-top">
+              <span class="case-num">01</span>
+              <span class="tag">ML y Datos</span>
+              <span class="case-year">2026</span>
+            </div>
+            <h3>Predicción de SLA en última milla</h3>
+            <p>Base analítica por guía y modelos para estimar tiempos de entrega e incumplimiento de SLA en Bogotá, con validación temporal y prueba final única.</p>
+            <div class="tag-list">
+              <span class="tag">Databricks</span>
+              <span class="tag">DuckDB</span>
+              <span class="tag">SQL Server</span>
+              <span class="tag">XGBoost</span>
+            </div>
+            <div class="case-actions">
+              <button class="btn btn-small" type="button" data-case="sla">Leer ficha</button>
+              <a class="btn btn-small btn-quiet" href="https://github.com/jhonfcb87colab/PROYECTO_DE_GRADO_ML-" target="_blank" rel="noopener noreferrer">Repositorio</a>
+            </div>
+          </article>
+
+          <article class="case-card" data-category="ml" data-search="proyecto centinela perceptron multicapa mlp pytorch produccion agricola valle del cauca regresion datos abiertos">
+            <div class="case-top">
+              <span class="case-num">02</span>
+              <span class="tag">ML e IA</span>
+              <span class="case-year">2026</span>
+            </div>
+            <h3>Proyecto Centinela · MLP agrícola</h3>
+            <p>Red neuronal en PyTorch para estimar producción frutícola del Valle del Cauca a partir de municipio, cultivo, ciclo y año, con auditoría ética de sus errores.</p>
+            <div class="tag-list">
+              <span class="tag">PyTorch</span>
+              <span class="tag">MLP</span>
+              <span class="tag">Pandas</span>
+              <span class="tag">Socrata</span>
+            </div>
+            <div class="case-actions">
+              <button class="btn btn-small" type="button" data-case="centinela">Leer ficha</button>
+              <a class="btn btn-small btn-quiet" href="https://github.com/jhonfcb87colab/ProyectoCentinela" target="_blank" rel="noopener noreferrer">Repositorio</a>
+            </div>
+          </article>
+
+          <article class="case-card" data-category="data web" data-search="bi web flask dashboards sql server postgresql mysql roles permisos autoria visualizacion auditoria">
+            <div class="case-top">
+              <span class="case-num">03</span>
+              <span class="tag">Datos y BI</span>
+              <span class="case-year">2026</span>
+            </div>
+            <h3>BI Web · dashboards con roles y SQL</h3>
+            <p>Aplicación Flask con capas de autoría y visualización, login, permisos por tablero, consola SQL y conexión a SQL Server, PostgreSQL, MySQL y más.</p>
+            <div class="tag-list">
+              <span class="tag">Flask</span>
+              <span class="tag">SQL Server</span>
+              <span class="tag">RBAC</span>
+              <span class="tag">SVG charts</span>
+            </div>
+            <div class="case-actions">
+              <button class="btn btn-small" type="button" data-case="biweb">Leer ficha</button>
+              <a class="btn btn-small btn-quiet" href="https://github.com/jhonfcb87colab/Proyecto06" target="_blank" rel="noopener noreferrer">Repositorio</a>
+            </div>
+          </article>
+
+          <article class="case-card" data-category="data automation" data-search="repoblamiento bi escritorio python ttkbootstrap sql server procedimientos almacenados fechas login roles admin">
+            <div class="case-top">
+              <span class="case-num">04</span>
+              <span class="tag">Automatización</span>
+              <span class="case-year">2026</span>
+            </div>
+            <h3>Repoblamiento BI · app de escritorio</h3>
+            <p>Herramienta Python para relanzar procesos de cubos por rango de fechas, ejecutar procedimientos en SQL Server y administrar usuarios y roles sin tocar el servidor.</p>
+            <div class="tag-list">
+              <span class="tag">Python</span>
+              <span class="tag">ttkbootstrap</span>
+              <span class="tag">SQL Server</span>
+              <span class="tag">Stored procs</span>
+            </div>
+            <div class="case-actions">
+              <button class="btn btn-small" type="button" data-case="repoblamiento">Leer ficha</button>
+              <a class="btn btn-small btn-quiet" href="https://github.com/jhonfcb87colab/DevAppFinalRepoblar" target="_blank" rel="noopener noreferrer">Repositorio</a>
+            </div>
+          </article>
+
+          <article class="case-card" data-category="web automation" data-search="api repoblamiento fastapi rest endpoints python json integracion sql server procesos">
+            <div class="case-top">
+              <span class="case-num">05</span>
+              <span class="tag">Web y APIs</span>
+              <span class="case-year">2026</span>
+            </div>
+            <h3>API de repoblamiento con FastAPI</h3>
+            <p>API REST para validar y disparar procesos de repoblamiento, con endpoints de prueba y un punto de integración para conectar procedimientos de SQL Server.</p>
+            <div class="tag-list">
+              <span class="tag">FastAPI</span>
+              <span class="tag">Python</span>
+              <span class="tag">REST</span>
+              <span class="tag">JSON</span>
+            </div>
+            <div class="case-actions">
+              <button class="btn btn-small" type="button" data-case="api">Leer ficha</button>
+              <a class="btn btn-small btn-quiet" href="https://github.com/jhonfcb87colab/Dev_Repoblamiento" target="_blank" rel="noopener noreferrer">Repositorio</a>
+            </div>
+          </article>
+
+          <article class="case-card" data-category="automation" data-search="ocr guias logisticas python opencv tesseract pyzbar codigo barras devoluciones imagenes tif sql server">
+            <div class="case-top">
+              <span class="case-num">06</span>
+              <span class="tag">Automatización</span>
+              <span class="case-year">2025</span>
+            </div>
+            <h3>OCR de guías logísticas</h3>
+            <p>Procesamiento por lotes de imágenes TIF con OpenCV, Tesseract y pyzbar para leer códigos de barras, detectar devoluciones e insertar resultados en SQL Server.</p>
+            <div class="tag-list">
+              <span class="tag">OpenCV</span>
+              <span class="tag">Tesseract</span>
+              <span class="tag">pyzbar</span>
+              <span class="tag">SQL Server</span>
+            </div>
+            <div class="case-actions">
+              <button class="btn btn-small" type="button" data-case="ocr">Leer ficha</button>
+              <a class="btn btn-small btn-quiet" href="https://github.com/jhonfcb87colab/Dev_Py_pruebas_procesar_img" target="_blank" rel="noopener noreferrer">Repositorio</a>
+            </div>
+          </article>
+
+          <div class="empty-state" id="caseEmpty" hidden>
+            <p>No hay casos que coincidan con la búsqueda o el filtro seleccionado.</p>
+            <button class="btn" type="button" id="clearFilters">Limpiar filtros</button>
+          </div>
+        </div>
+
+        <div class="callout">
+          <p><strong>Nota metodológica.</strong> Las cifras y resultados corresponden a los contextos descritos en cada ficha. No deben interpretarse como benchmarks generales ni como garantía de rendimiento en otros entornos.</p>
+        </div>
+      </section>
+
+      <section class="tab-content" id="panel-metodos" role="tabpanel" aria-labelledby="tab-metodos" tabindex="0" hidden>
+        <h2>Métodos y arquitectura</h2>
+        <p class="panel-intro">Resumen de los patrones que se repiten en los casos: un flujo por capas, consultas medibles y automatizaciones con control explícito. Cada bloque describe el criterio, no una receta rígida.</p>
+
+        <div class="flow" aria-label="Flujo de referencia de datos">
+          <span class="flow-step">Origen</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-step">Staging</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-step">Bronce</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-step">Plata</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-step">Oro</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-step">Consumo</span>
+        </div>
+
+        <div class="grid grid-2">
+          <details class="note" open>
+            <summary>Arquitectura Medallion</summary>
+            <div class="note-body">
+              <p>La arquitectura separa el dato crudo del dato listo para analizar. Cada capa tiene una responsabilidad distinta y un nivel de calidad esperado.</p>
+              <ul class="list">
+                <li><strong>Bronce:</strong> ingesta sin transformar, con trazabilidad de origen y fecha de carga.</li>
+                <li><strong>Plata:</strong> limpieza, normalización, deduplicación y reglas de negocio básicas.</li>
+                <li><strong>Oro:</strong> modelos agregados y tablas listas para consumo analítico.</li>
+              </ul>
+            </div>
+          </details>
+
+          <details class="note">
+            <summary>Optimización T-SQL</summary>
+            <div class="note-body">
+              <p>La optimización parte del plan de ejecución y de la carga real, no de aplicar índices por costumbre.</p>
+              <ul class="list">
+                <li>Revisar predicados y evitar funciones que impidan el uso de índices.</li>
+                <li>Analizar estadísticas, cardinalidad y lecturas lógicas antes de crear índices.</li>
+                <li>Evaluar particionamiento y filegroups cuando el volumen lo justifica.</li>
+                <li>Medir antes y después; documentar el cambio y su impacto.</li>
+              </ul>
+            </div>
+          </details>
+
+          <details class="note">
+            <summary>Automatización y orquestación</summary>
+            <div class="note-body">
+              <p>Automatizar no es solo programar una tarea: implica hacerla observable y repetible.</p>
+              <ul class="list">
+                <li>Separar configuración, credenciales y lógica.</li>
+                <li>Registrar inicio, fin, errores y duración de cada ejecución.</li>
+                <li>Diseñar procesos idempotentes y con reintentos controlados.</li>
+                <li>Usar Python, Bash o SSIS según el entorno y el equipo que mantiene el proceso.</li>
+              </ul>
+            </div>
+          </details>
+
+          <details class="note">
+            <summary>Calidad y observabilidad</summary>
+            <div class="note-body">
+              <p>Un pipeline silencioso no es necesariamente un pipeline sano. La validación debe ser explícita.</p>
+              <ul class="list">
+                <li>Verificar conteos, nulos, duplicados y rangos esperados.</li>
+                <li>Controlar frescura del dato y fechas de última carga.</li>
+                <li>Separar errores técnicos de errores de negocio.</li>
+                <li>Alertar con contexto suficiente para diagnosticar sin abrir el servidor.</li>
+              </ul>
+            </div>
+          </details>
+
+          <details class="note">
+            <summary>Entrega analítica y Power BI</summary>
+            <div class="note-body">
+              <p>La capa de consumo debe responder preguntas concretas y mantener coherencia entre métricas.</p>
+              <ul class="list">
+                <li>Definir métricas una sola vez y reutilizarlas en los tableros.</li>
+                <li>Documentar el grano de cada tabla y el significado de cada campo.</li>
+                <li>Optimizar el modelo antes de agregar complejidad visual.</li>
+                <li>Revisar permisos y exposición de datos sensibles.</li>
+              </ul>
+            </div>
+          </details>
+
+          <details class="note">
+            <summary>Checklist de revisión</summary>
+            <div class="note-body">
+              <ul class="list">
+                <li>¿El problema y el alcance están escritos?</li>
+                <li>¿Las fuentes y supuestos están identificados?</li>
+                <li>¿El proceso se puede repetir sin intervención manual?</li>
+                <li>¿Hay validaciones y registro de errores?</li>
+                <li>¿Los resultados tienen fecha, contexto y límites?</li>
+                <li>¿La documentación permite que otra persona lo mantenga?</li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section class="tab-content" id="panel-recursos" role="tabpanel" aria-labelledby="tab-recursos" tabindex="0" hidden>
+        <h2>Recursos y referencias</h2>
+        <p class="panel-intro">Herramientas, fuentes y definiciones de apoyo. Los enlaces externos llevan a documentación oficial o a los repositorios donde se publica el código de cada caso.</p>
+
+        <div class="grid grid-2">
+          <article class="card">
+            <span class="kicker">Herramientas</span>
+            <h3>Organizadas por área</h3>
+            <ul class="list">
+              <li><strong>Bases de datos:</strong> SQL Server, T-SQL, PostgreSQL, MySQL.</li>
+              <li><strong>Procesamiento:</strong> Python, Pandas, DuckDB, PyTorch.</li>
+              <li><strong>Integración:</strong> SSIS, FastAPI, APIs REST.</li>
+              <li><strong>Visualización:</strong> Power BI, gráficos SVG.</li>
+              <li><strong>Automatización:</strong> Bash, Linux, Git.</li>
+              <li><strong>Visión:</strong> OpenCV, Tesseract, pyzbar.</li>
+            </ul>
+          </article>
+
+          <article class="card">
+            <span class="kicker">Fuentes primarias</span>
+            <h3>Repositorios de los casos</h3>
+            <ul class="list">
+              <li><a href="https://github.com/jhonfcb87colab/PROYECTO_DE_GRADO_ML-" target="_blank" rel="noopener noreferrer">Predicción de SLA en última milla</a></li>
+              <li><a href="https://github.com/jhonfcb87colab/ProyectoCentinela" target="_blank" rel="noopener noreferrer">Proyecto Centinela</a></li>
+              <li><a href="https://github.com/jhonfcb87colab/Proyecto06" target="_blank" rel="noopener noreferrer">BI Web con roles y SQL</a></li>
+              <li><a href="https://github.com/jhonfcb87colab/DevAppFinalRepoblar" target="_blank" rel="noopener noreferrer">Repoblamiento BI de escritorio</a></li>
+              <li><a href="https://github.com/jhonfcb87colab/Dev_Repoblamiento" target="_blank" rel="noopener noreferrer">API de repoblamiento</a></li>
+              <li><a href="https://github.com/jhonfcb87colab/Dev_Py_pruebas_procesar_img" target="_blank" rel="noopener noreferrer">OCR de guías logísticas</a></li>
+            </ul>
+          </article>
+        </div>
+
+        <h3 class="section-sub">Glosario mínimo</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Término</th>
+                <th scope="col">Definición breve</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Arquitectura Medallion</td>
+                <td>Organización por capas de calidad creciente: bronce, plata y oro.</td>
+              </tr>
+              <tr>
+                <td>Idempotencia</td>
+                <td>Propiedad de un proceso que puede ejecutarse varias veces sin duplicar resultados.</td>
+              </tr>
+              <tr>
+                <td>Predicado SARGable</td>
+                <td>Condición de consulta que permite al motor usar índices de forma eficiente.</td>
+              </tr>
+              <tr>
+                <td>SLA</td>
+                <td>Acuerdo de nivel de servicio; en logística suele referirse al cumplimiento de tiempos de entrega.</td>
+              </tr>
+              <tr>
+                <td>ETL / ELT</td>
+                <td>Patrones de extracción, transformación y carga de datos entre sistemas.</td>
+              </tr>
+              <tr>
+                <td>Frescura del dato</td>
+                <td>Tiempo transcurrido desde la última actualización válida de una tabla o proceso.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <details class="note">
+          <summary>Documentación externa recomendada</summary>
+          <div class="note-body">
+            <ul class="list">
+              <li><a href="https://learn.microsoft.com/sql/t-sql/language-reference" target="_blank" rel="noopener noreferrer">Microsoft Learn · Referencia de T-SQL</a></li>
+              <li><a href="https://docs.python.org/3/" target="_blank" rel="noopener noreferrer">Python · Documentación oficial</a></li>
+              <li><a href="https://duckdb.org/docs/" target="_blank" rel="noopener noreferrer">DuckDB · Documentación</a></li>
+              <li><a href="https://pandas.pydata.org/docs/" target="_blank" rel="noopener noreferrer">Pandas · Documentación</a></li>
+              <li><a href="https://fastapi.tiangolo.com/" target="_blank" rel="noopener noreferrer">FastAPI · Documentación</a></li>
+              <li><a href="https://learn.microsoft.com/power-bi/" target="_blank" rel="noopener noreferrer">Microsoft Learn · Power BI</a></li>
+              <li><a href="https://docs.databricks.com/" target="_blank" rel="noopener noreferrer">Databricks · Documentación</a></li>
+              <li><a href="https://github.com/tesseract-ocr/tesseract" target="_blank" rel="noopener noreferrer">Tesseract OCR · Repositorio</a></li>
+            </ul>
+          </div>
+        </details>
+      </section>
+
+      <section class="tab-content" id="panel-perfil" role="tabpanel" aria-labelledby="tab-perfil" tabindex="0" hidden>
+        <h2>Perfil y contacto</h2>
+        <p class="panel-intro">Información sobre el autor del documento y el enfoque con el que se mantiene. Este espacio no es una página de servicios: es el contexto necesario para interpretar y discutir el contenido.</p>
+
+        <div class="profile">
+          <div class="profile-head">
+            <div class="avatar" aria-hidden="true">JF</div>
+            <div>
+              <h3>Jhon Fernando Cruz</h3>
+              <p>Ingeniero de datos · T-SQL, Python y arquitecturas analíticas</p>
+            </div>
+          </div>
+          <p>Diseño y documento soluciones de datos de punta a punta: consultas T-SQL avanzadas, índices y particionamiento, automatizaciones en Python sobre Linux y arquitecturas Medallion con SSIS y Power BI.</p>
+          <div class="grid grid-2">
+            <div>
+              <h4>Áreas de trabajo</h4>
+              <ul class="list">
+                <li>Optimización y modelado en SQL Server.</li>
+                <li>Automatización de procesos con Python y Bash.</li>
+                <li>Arquitecturas por capas y calidad del dato.</li>
+                <li>Tableros y modelos analíticos en Power BI.</li>
+                <li>Documentación técnica y reproducibilidad.</li>
+              </ul>
+            </div>
+            <div>
+              <h4>Enfoque</h4>
+              <p>Entender el problema y el contexto antes de proponer una solución. Medir, documentar límites y dejar el proceso en condiciones de ser mantenido por otra persona. El código y los resultados se publican cuando el caso lo permite.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout">
+          <p><strong>Correspondencia.</strong> Para preguntas, correcciones o intercambio de conocimiento sobre los casos documentados: <a href="mailto:jfcruz.ibp@gmail.com">jfcruz.ibp@gmail.com</a>.</p>
+          <p>También puedes revisar el perfil público en <a href="https://github.com/jhonfcb87colab" target="_blank" rel="noopener noreferrer">GitHub</a> o abrir un issue en el repositorio correspondiente.</p>
+        </div>
+
+        <details class="note">
+          <summary>Nota sobre el alcance</summary>
+          <div class="note-body">
+            <p>Este documento tiene fines educativos y documentales. No constituye una oferta de servicios, una propuesta comercial ni asesoría profesional para un caso concreto.</p>
+          </div>
+        </details>
+      </section>
+    </main>
+
+    <footer class="doc-footer">
+      <p>Documento de divulgación mantenido por Jhon Fernando Cruz. Contenido educativo; se permite la cita con atribución.</p>
+      <p>2026 · <a href="#tab-presentacion" data-goto="tab-presentacion">Volver al inicio</a></p>
+    </footer>
+  </div>
+
+  <dialog id="caseDialog" aria-labelledby="caseDialogTitle">
+    <div class="modal-head">
+      <div>
+        <span class="kicker" id="caseDialogMeta"></span>
+        <h3 id="caseDialogTitle"></h3>
+      </div>
+      <form method="dialog">
+        <button class="icon-btn" type="submit" aria-label="Cerrar ficha">×</button>
+      </form>
+    </div>
+    <div class="modal-body" id="caseDialogBody"></div>
+    <div class="modal-foot">
+      <a class="btn btn-primary" id="caseDialogRepo" href="#" target="_blank" rel="noopener noreferrer">Abrir repositorio</a>
+      <form method="dialog">
+        <button class="btn btn-quiet" type="submit">Cerrar</button>
+      </form>
+    </div>
+  </dialog>
+
+  <script>
+    (function () {
+      'use strict';
+
+      const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
+      const panels = Array.from(document.querySelectorAll('[role="tabpanel"]'));
+
+      function activateTab(tab, focus) {
+        if (!tab) return;
+        tabs.forEach(function (item) {
+          const selected = item === tab;
+          item.setAttribute('aria-selected', String(selected));
+          item.classList.toggle('active', selected);
+          item.tabIndex = selected ? 0 : -1;
+        });
+        panels.forEach(function (panel) {
+          const selected = panel.id === tab.getAttribute('aria-controls');
+          panel.classList.toggle('active', selected);
+          panel.hidden = !selected;
+        });
+        if (focus) tab.focus();
+        if (window.history && history.replaceState) {
+          history.replaceState(null, '', '#' + tab.id);
+        }
+      }
+
+      tabs.forEach(function (tab, index) {
+        tab.addEventListener('click', function () {
+          activateTab(tab, false);
+        });
+        tab.addEventListener('keydown', function (event) {
+          let next = null;
+          if (event.key === 'ArrowRight') next = tabs[(index + 1) % tabs.length];
+          else if (event.key === 'ArrowLeft') next = tabs[(index - 1 + tabs.length) % tabs.length];
+          else if (event.key === 'Home') next = tabs[0];
+          else if (event.key === 'End') next = tabs[tabs.length - 1];
+          if (next) {
+            event.preventDefault();
+            activateTab(next, true);
+          }
+        });
+      });
+
+      const initialTab = location.hash ? document.getElementById(location.hash.slice(1)) : null;
+      if (initialTab && initialTab.getAttribute('role') === 'tab') {
+        activateTab(initialTab, false);
+      }
+
+      document.querySelectorAll('[data-goto]').forEach(function (control) {
+        control.addEventListener('click', function (event) {
+          event.preventDefault();
+          const target = document.getElementById(control.dataset.goto);
+          activateTab(target, true);
+        });
+      });
+
+      const status = document.getElementById('actionStatus');
+      const copyButton = document.getElementById('copyLink');
+      if (copyButton) {
+        copyButton.addEventListener('click', function () {
+          const activeTab = document.querySelector('[role="tab"][aria-selected="true"]');
+          const link = location.href.split('#')[0] + (activeTab ? '#' + activeTab.id : '');
+          const done = function () {
+            if (status) status.textContent = 'Enlace copiado al portapapeles.';
+          };
+          const fail = function () {
+            if (status) status.textContent = 'No se pudo copiar el enlace.';
+          };
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(link).then(done).catch(fail);
+          } else {
+            fail();
+          }
+          window.setTimeout(function () {
+            if (status) status.textContent = '';
+          }, 3000);
+        });
+      }
+
+      const printButton = document.getElementById('printDoc');
+      if (printButton) {
+        printButton.addEventListener('click', function () {
+          window.print();
+        });
+      }
+
+      const filterButtons = Array.from(document.querySelectorAll('.filter'));
+      const caseCards = Array.from(document.querySelectorAll('.case-card'));
+      const searchInput = document.getElementById('caseSearch');
+      const caseCount = document.getElementById('caseCount');
+      const caseEmpty = document.getElementById('caseEmpty');
+      const clearFilters = document.getElementById('clearFilters');
+      let activeFilter = 'all';
+
+      function normalize(text) {
+        return text
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .toLowerCase()
+          .trim();
+      }
+
+      function pad(value) {
+        return String(value).padStart(2, '0');
+      }
+
+      function updateCounts() {
+        filterButtons.forEach(function (button) {
+          const filter = button.dataset.filter;
+          const total = filter === 'all'
+            ? caseCards.length
+            : caseCards.filter(function (card) {
+                return card.dataset.category.split(' ').indexOf(filter) !== -1;
+              }).length;
+          const counter = button.querySelector('.count');
+          if (counter) counter.textContent = pad(total);
+        });
+      }
+
+      function applyFilters() {
+        const term = normalize(searchInput ? searchInput.value : '');
+        let visible = 0;
+
+        caseCards.forEach(function (card) {
+          const categories = card.dataset.category.split(' ');
+          const matchesCategory = activeFilter === 'all' || categories.indexOf(activeFilter) !== -1;
+          const searchable = normalize(card.dataset.search || card.textContent);
+          const matchesSearch = !term || searchable.indexOf(term) !== -1;
+          const show = matchesCategory && matchesSearch;
+          card.hidden = !show;
+          if (show) visible += 1;
+        });
+
+        if (caseCount) caseCount.textContent = pad(visible);
+        if (caseEmpty) caseEmpty.hidden = visible !== 0;
+      }
+
+      updateCounts();
+      applyFilters();
+
+      filterButtons.forEach(function (button) {
+        button.addEventListener('click', function () {
+          activeFilter = button.dataset.filter || 'all';
+          filterButtons.forEach(function (item) {
+            item.setAttribute('aria-pressed', String(item === button));
+          });
+          applyFilters();
+        });
+      });
+
+      if (searchInput) {
+        searchInput.addEventListener('input', applyFilters);
+      }
+
+      if (clearFilters) {
+        clearFilters.addEventListener('click', function () {
+          activeFilter = 'all';
+          if (searchInput) searchInput.value = '';
+          filterButtons.forEach(function (item) {
+            item.setAttribute('aria-pressed', String(item.dataset.filter === 'all'));
+          });
+          applyFilters();
+          if (searchInput) searchInput.focus();
+        });
+      }
+
+      const caseData = {
+        sla: {
+          title: 'Predicción de SLA en última milla',
+          meta: 'Caso 01 · ML y Datos · 2026',
+          repo: 'https://github.com/jhonfcb87colab/PROYECTO_DE_GRADO_ML-',
+          sections: [
+            {
+              title: 'Contexto',
+              body: 'Construcción de una base analítica por guía para estimar tiempos de entrega e incumplimiento de SLA en Bogotá. El trabajo hace parte de una tesis de maestría en ciencia de datos.'
+            },
+            {
+              title: 'Método',
+              body: [
+                'Integración de fuentes desde SQL Server y Databricks.',
+                'Construcción de variables por guía y validación temporal.',
+                'Comparación de XGBoost, LightGBM y Random Forest, con una prueba final única.'
+              ]
+            },
+            {
+              title: 'Resultados',
+              body: [
+                '21 pasos documentados de punta a punta.',
+                'Cuatro modelos comparados bajo el mismo esquema de validación.',
+                'La validación temporal permitió reducir el riesgo de fuga de información.'
+              ]
+            },
+            {
+              title: 'Aprendizajes',
+              body: 'Documentar supuestos y separar la validación de la prueba final hace que los resultados sean más creíbles y reproducibles.'
+            }
+          ]
+        },
+        centinela: {
+          title: 'Proyecto Centinela · MLP agrícola',
+          meta: 'Caso 02 · ML e IA · 2026',
+          repo: 'https://github.com/jhonfcb87colab/ProyectoCentinela',
+          sections: [
+            {
+              title: 'Contexto',
+              body: 'Estimación de producción frutícola en el Valle del Cauca a partir de datos abiertos, con variables de municipio, cultivo, ciclo y año.'
+            },
+            {
+              title: 'Método',
+              body: [
+                'Preparación de datos categóricos y numéricos con Pandas.',
+                'Red neuronal multicapa implementada en PyTorch.',
+                'Auditoría ética de errores y revisión de sesgos en los resultados.'
+              ]
+            },
+            {
+              title: 'Resultados',
+              body: [
+                'R² de 0,46 en el conjunto de prueba.',
+                'El modelo permite explorar tendencias, no sustituir registros oficiales.',
+                'Los errores se analizaron por cultivo y municipio.'
+              ]
+            },
+            {
+              title: 'Aprendizajes',
+              body: 'Los datos abiertos tienen límites de cobertura y granularidad. Documentar esos límites es tan importante como reportar la métrica final.'
+            }
+          ]
+        },
+        biweb: {
+          title: 'BI Web · dashboards con roles y SQL',
+          meta: 'Caso 03 · Datos y BI · 2026',
+          repo: 'https://github.com/jhonfcb87colab/Proyecto06',
+          sections: [
+            {
+              title: 'Contexto',
+              body: 'Aplicación de BI con capas separadas de autoría y visualización, pensada para publicar tableros con control de acceso y conexión a varios motores.'
+            },
+            {
+              title: 'Método',
+              body: [
+                'Backend en Flask con login y permisos por tablero.',
+                'Consola SQL y capa de conexión para SQL Server, PostgreSQL, MySQL y otros motores.',
+                'Visualizaciones construidas con gráficos SVG.'
+              ]
+            },
+            {
+              title: 'Resultados',
+              body: [
+                'Seis motores de base de datos soportados.',
+                'Separación entre autoría, publicación y consulta.',
+                'Permisos y auditoría como parte del diseño, no como añadido posterior.'
+              ]
+            },
+            {
+              title: 'Aprendizajes',
+              body: 'La seguridad y los permisos deben modelarse desde el inicio. Una consola SQL exige validaciones y límites claros.'
+            }
+          ]
+        },
+        repoblamiento: {
+          title: 'Repoblamiento BI · app de escritorio',
+          meta: 'Caso 04 · Automatización · 2026',
+          repo: 'https://github.com/jhonfcb87colab/DevAppFinalRepoblar',
+          sections: [
+            {
+              title: 'Contexto',
+              body: 'Herramienta para relanzar procesos de cubos por rango de fechas y administrar usuarios y roles sin exigir acceso directo al servidor.'
+            },
+            {
+              title: 'Método',
+              body: [
+                'Interfaz de escritorio con Python y ttkbootstrap.',
+                'Ejecución de procedimientos almacenados en SQL Server.',
+                'Gestión de fechas, usuarios y roles desde la aplicación.'
+              ]
+            },
+            {
+              title: 'Resultados',
+              body: [
+                'Operación repetible por rango de fechas.',
+                'Menor dependencia de accesos manuales al servidor.',
+                'Las operaciones sensibles quedan encapsuladas en la aplicación.'
+              ]
+            },
+            {
+              title: 'Aprendizajes',
+              body: 'Una interfaz simple puede reducir errores operativos si las validaciones viven en el código y no en la memoria del operador.'
+            }
+          ]
+        },
+        api: {
+          title: 'API de repoblamiento con FastAPI',
+          meta: 'Caso 05 · Web y APIs · 2026',
+          repo: 'https://github.com/jhonfcb87colab/Dev_Repoblamiento',
+          sections: [
+            {
+              title: 'Contexto',
+              body: 'API REST para validar y disparar procesos de repoblamiento, con endpoints de prueba y un punto de integración con procedimientos de SQL Server.'
+            },
+            {
+              title: 'Método',
+              body: [
+                'Definición de endpoints con FastAPI.',
+                'Validación de parámetros y respuestas en JSON.',
+                'Punto de integración preparado para conectar la ejecución de procesos.'
+              ]
+            },
+            {
+              title: 'Resultados',
+              body: [
+                'Tres endpoints base documentados.',
+                'Contrato claro para integrar desde otros sistemas.',
+                'Separación entre validación y ejecución del proceso.'
+              ]
+            },
+            {
+              title: 'Aprendizajes',
+              body: 'Una API es útil cuando su contrato es explícito. Validar antes de ejecutar evita errores difíciles de rastrear.'
+            }
+          ]
+        },
+        ocr: {
+          title: 'OCR de guías logísticas',
+          meta: 'Caso 06 · Automatización · 2025',
+          repo: 'https://github.com/jhonfcb87colab/Dev_Py_pruebas_procesar_img',
+          sections: [
+            {
+              title: 'Contexto',
+              body: 'Procesamiento por lotes de imágenes TIF de guías logísticas para extraer información y registrar devoluciones.'
+            },
+            {
+              title: 'Método',
+              body: [
+                'Lectura de códigos de barras con pyzbar y OpenCV.',
+                'Reconocimiento de texto con Tesseract.',
+                'Inserción de resultados en SQL Server por lotes.'
+              ]
+            },
+            {
+              title: 'Resultados',
+              body: [
+                'Procesamiento de hasta 5.000 filas por lote.',
+                'Detección de devoluciones a partir de la información leída.',
+                'Resultados centralizados en la base de datos.'
+              ]
+            },
+            {
+              title: 'Aprendizajes',
+              body: 'La calidad de la imagen y el preprocesamiento determinan el resultado del OCR. El manejo de errores por lote es indispensable.'
+            }
+          ]
+        }
+      };
+
+      const dialog = document.getElementById('caseDialog');
+      const dialogTitle = document.getElementById('caseDialogTitle');
+      const dialogMeta = document.getElementById('caseDialogMeta');
+      const dialogBody = document.getElementById('caseDialogBody');
+      const dialogRepo = document.getElementById('caseDialogRepo');
+
+      function renderSection(section) {
+        const content = Array.isArray(section.body)
+          ? '<ul class="list">' + section.body.map(function (item) {
+              return '<li>' + item + '</li>';
+            }).join('') + '</ul>'
+          : '<p>' + section.body + '</p>';
+        return '<div class="modal-section"><h4>' + section.title + '</h4>' + content + '</div>';
+      }
+
+      function openCase(key) {
+        const data = caseData[key];
+        if (!data || !dialog) return;
+        dialogTitle.textContent = data.title;
+        dialogMeta.textContent = data.meta;
+        dialogBody.innerHTML = data.sections.map(renderSection).join('');
+        if (dialogRepo) dialogRepo.href = data.repo;
+        if (typeof dialog.showModal === 'function') {
+          dialog.showModal();
+        } else {
+          dialog.setAttribute('open', '');
+        }
+        document.body.classList.add('modal-open');
+      }
+
+      document.querySelectorAll('[data-case]').forEach(function (button) {
+        button.addEventListener('click', function () {
+          openCase(button.dataset.case);
+        });
+      });
+
+      if (dialog) {
+        dialog.addEventListener('close', function () {
+          document.body.classList.remove('modal-open');
+        });
+        dialog.addEventListener('click', function (event) {
+          if (event.target === dialog) {
+            if (typeof dialog.close === 'function') dialog.close();
+          }
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
