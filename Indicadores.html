@@ -122,6 +122,14 @@ h1{font-size:26px;font-weight:600;letter-spacing:-.4px;line-height:1.15}
 .btn.ghost{background:#fff;border-color:var(--line)}
 .btn.ghost:hover{background:var(--cream)}
 .btn.small{height:29px;font-size:11px;padding:0 9px}
+.home-link{
+  width:33px;height:33px;flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;
+  border:1px solid var(--line);border-radius:4px;background:#fff;color:var(--ink);
+  transition:background .18s ease,border-color .18s ease;
+}
+.home-link:hover{background:var(--cream);border-color:var(--line-2)}
+.home-link:focus-visible{outline:2px solid var(--aqua);outline-offset:1px}
+.home-link svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 
 /* ---------- Estructura ---------- */
 .view{animation:fadeUp .34s ease both}
@@ -432,6 +440,9 @@ table.data td .alias small{display:block;color:var(--muted);font-size:9px;font-w
       </div>
     </div>
     <div class="top-meta">
+      <a class="home-link" href="index.html" title="Home" aria-label="Home">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.8 12 3l9 7.8M5.5 9.5V21h13V9.5M9 21v-7h6v7"/></svg>
+      </a>
       <span class="badge plain"><span class="live-dot"></span> Corte 28 oct 2026</span>
       <span class="badge" id="privacyBadge">SHA-256 · alias activos</span>
       <button class="btn ghost small" id="privacyToggle" type="button">Ocultar alias</button>

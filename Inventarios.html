@@ -89,6 +89,19 @@ h1 {
   display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end;
   align-items: stretch; flex: 0 0 auto;
 }
+.home-link {
+  width: 36px; height: 36px; flex: 0 0 auto; align-self: center;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--text); background-color: var(--surface);
+  border: 1px solid var(--border); border-radius: 4px;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+.home-link:hover { background-color: var(--surface-2); border-color: var(--border-3); }
+.home-link:focus-visible { outline: 2px solid var(--border-3); outline-offset: 2px; }
+.home-link svg {
+  width: 19px; height: 19px; fill: none; stroke: currentColor;
+  stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
+}
 .update-chip {
   background-color: var(--surface-4);
   border: 1px solid var(--border-2);
@@ -752,6 +765,9 @@ h1 {
     </div>
   </div>
   <div class="update-panel">
+    <a class="home-link" href="index.html" title="Home" aria-label="Home">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.8 12 3l9 7.8M5.5 9.5V21h13V9.5M9 21v-7h6v7"/></svg>
+    </a>
     <div class="update-chip">
       <span class="update-label">Corte extracción</span>
       <strong id="meta-extraction">—</strong>
