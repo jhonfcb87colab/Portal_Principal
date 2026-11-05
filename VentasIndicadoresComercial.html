@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Panel ejecutivo de actividad comercial 2023-2026 con datos anonimizados.">
+    <title>Actividad Comercial · Panel ejecutivo</title>
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+    <div class="page-shell">
+        <header class="topbar">
+            <div class="brand">
+                <div class="brand-mark" aria-hidden="true">
+                    <span></span><span></span><span></span>
+                </div>
+                <div class="brand-copy">
+                    <p class="eyebrow">Panel ejecutivo · 2023–2026</p>
+                    <h1>Actividad Comercial</h1>
+                </div>
+            </div>
+            <div class="topbar-actions">
+                <span class="status-pill" title="No se muestran nombres, identificadores ni importes por cliente">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
+                    Datos protegidos
+                </span>
+                <button class="btn btn-line" id="privacyBtn" type="button">Privacidad</button>
+            </div>
+        </header>
+
+        <nav class="tabs" role="tablist" aria-label="Secciones del panel">
+            <button class="tab-button active" role="tab" id="tab-btn-resumen" aria-controls="tab-resumen" aria-selected="true" data-tab="resumen">
+                <span class="tab-num">01</span> Resumen
+            </button>
+            <button class="tab-button" role="tab" id="tab-btn-tendencias" aria-controls="tab-tendencias" aria-selected="false" data-tab="tendencias" tabindex="-1">
+                <span class="tab-num">02</span> Tendencias
+            </button>
+            <button class="tab-button" role="tab" id="tab-btn-productos" aria-controls="tab-productos" aria-selected="false" data-tab="productos" tabindex="-1">
+                <span class="tab-num">03</span> Productos
+            </button>
+            <button class="tab-button" role="tab" id="tab-btn-clientes" aria-controls="tab-clientes" aria-selected="false" data-tab="clientes" tabindex="-1">
+                <span class="tab-num">04</span> Clientes protegidos
+            </button>
+            <button class="tab-button" role="tab" id="tab-btn-metodologia" aria-controls="tab-metodologia" aria-selected="false" data-tab="metodologia" tabindex="-1">
+                <span class="tab-num">05</span> Metodología y privacidad
+            </button>
+        </nav>
+
+        <section class="filterbar" aria-label="Filtros globales">
+            <div class="filterbar-head">
+                <div>
+                    <h2>Filtros</h2>
+                    <p id="filterSummary">Cargando datos…</p>
+                </div>
+                <div class="filterbar-actions">
+                    <button class="btn btn-quiet" id="resetFilters" type="button">Restablecer</button>
+                    <button class="btn btn-dark" id="exportBtn" type="button">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path></svg>
+                        Exportar resumen
+                    </button>
+                </div>
+            </div>
+            <div class="filters" id="filters"></div>
+        </section>
+
+        <main class="main-content">
+            <section class="tab-panel active" id="tab-resumen" role="tabpanel" aria-labelledby="tab-btn-resumen">
+                <div class="section-head">
+                    <div>
+                        <p class="section-kicker">Lectura ejecutiva</p>
+                        <h2>El pulso del negocio</h2>
+                        <p>Indicadores, estacionalidad y distribución del periodo seleccionado. Todos los valores son agregados.</p>
+                    </div>
+                    <span class="section-stamp" id="periodStamp">2023–2026</span>
+                </div>
+
+                <div class="kpi-grid" id="kpiGrid" aria-live="polite"></div>
+
+                <div class="grid-12">
+                    <article class="card span-8">
+                        <div class="card-head">
+                            <div>
+                                <h3>Estacionalidad mensual</h3>
+                                <p>Ventas acumuladas por mes para los años seleccionados.</p>
+                            </div>
+                            <span class="card-tag" id="trendTag">Periodo</span>
+                        </div>
+                        <div class="chart chart-line" id="chartTrend"></div>
+                    </article>
+
+                    <article class="card span-4">
+                        <div class="card-head">
+                            <div>
+                                <h3>Mezcla por categoría</h3>
+                                <p>Participación sobre las ventas totales.</p>
+                            </div>
+                        </div>
+                        <div class="chart chart-donut" id="chartCategory"></div>
+                    </article>
+
+                    <article class="card span-6">
+                        <div class="card-head">
+                            <div>
+                                <h3>Territorios</h3>
+                                <p>Ventas y margen por región.</p>
+                            </div>
+                            <span class="card-tag">Agregado</span>
+                        </div>
+                        <div id="chartRegion" class="bar-list"></div>
+                    </article>
+
+                    <article class="card span-6">
+                        <div class="card-head">
+                            <div>
+                                <h3>Segmentos</h3>
+                                <p>Participación de ventas y clientes únicos.</p>
+                            </div>
+                            <span class="card-tag">Agregado</span>
+                        </div>
+                        <div id="chartSegment" class="bar-list"></div>
+                    </article>
+
+                    <article class="card span-12 insights-card">
+                        <div class="card-head">
+                            <div>
+                                <h3>Lectura rápida</h3>
+                                <p>Señales calculadas automáticamente con los filtros activos.</p>
+                            </div>
+                            <span class="card-tag">Sin datos personales</span>
+                        </div>
+                        <div class="insights" id="insights"></div>
+                    </article>
+                </div>
+            </section>
+
+            <section class="tab-panel" id="tab-tendencias" role="tabpanel" aria-labelledby="tab-btn-tendencias" hidden>
+                <div class="section-head">
+                    <div>
+                        <p class="section-kicker">Comparativo</p>
+                        <h2>Tendencias y ritmo anual</h2>
+                        <p>Evolución de los años seleccionados, estacionalidad y rendimiento comparado.</p>
+                    </div>
+                    <span class="section-stamp">Serie mensual</span>
+                </div>
+
+                <div class="year-grid" id="yearCards"></div>
+
+                <div class="grid-12">
+                    <article class="card span-12">
+                        <div class="card-head">
+                            <div>
+                                <h3>Comparativo mensual por año</h3>
+                                <p>Cada línea representa un año del filtro activo.</p>
+                            </div>
+                            <span class="card-tag" id="lineTag">Años</span>
+                        </div>
+                        <div class="chart chart-line chart-line-tall" id="chartYears"></div>
+                    </article>
+
+                    <article class="card span-7">
+                        <div class="card-head">
+                            <div>
+                                <h3>Mapa de calor</h3>
+                                <p>Intensidad de ventas por año y mes.</p>
+                            </div>
+                            <span class="card-tag">Escala relativa</span>
+                        </div>
+                        <div class="heatmap" id="heatmap"></div>
+                    </article>
+
+                    <article class="card span-5">
+                        <div class="card-head">
+                            <div>
+                                <h3>Comparativo anual</h3>
+                                <p>Resumen por año y variación de ventas.</p>
+                            </div>
+                        </div>
+                        <div class="table-wrap" id="yearTable"></div>
+                    </article>
+                </div>
+            </section>
+
+            <section class="tab-panel" id="tab-productos" role="tabpanel" aria-labelledby="tab-btn-productos" hidden>
+                <div class="section-head">
+                    <div>
+                        <p class="section-kicker">Catálogo</p>
+                        <h2>Productos y rendimiento</h2>
+                        <p>Explora el catálogo agregado. Ningún registro incluye información de clientes.</p>
+                    </div>
+                    <span class="section-stamp" id="productCount">0 productos</span>
+                </div>
+
+                <div class="grid-12">
+                    <article class="card span-5">
+                        <div class="card-head">
+                            <div>
+                                <h3>Top productos</h3>
+                                <p>Los diez productos con más ventas del filtro.</p>
+                            </div>
+                            <span class="card-tag">Ventas</span>
+                        </div>
+                        <div class="product-list" id="productChart"></div>
+                    </article>
+
+                    <article class="card span-7">
+                        <div class="card-head">
+                            <div>
+                                <h3>Explorador de catálogo</h3>
+                                <p>Busca, ordena y abre la ficha de cada producto.</p>
+                            </div>
+                        </div>
+
+                        <div class="table-tools">
+                            <label class="search-field" for="productSearch">
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m16 16 4 4"></path></svg>
+                                <input id="productSearch" type="search" placeholder="Buscar producto o categoría…" autocomplete="off">
+                            </label>
+                            <span class="table-count" id="productTableCount"></span>
+                        </div>
+
+                        <div class="table-wrap" id="productTable"></div>
+                        <div class="pager">
+                            <button class="btn btn-line btn-small" id="pagerPrev" type="button">Anterior</button>
+                            <span id="pagerInfo">Página 1</span>
+                            <button class="btn btn-line btn-small" id="pagerNext" type="button">Siguiente</button>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section class="tab-panel" id="tab-clientes" role="tabpanel" aria-labelledby="tab-btn-clientes" hidden>
+                <div class="section-head">
+                    <div>
+                        <p class="section-kicker">Privacidad por diseño</p>
+                        <h2>Clientes protegidos</h2>
+                        <p>Los clientes se analizan solo en agregado. Nombres, identificadores e importes individuales no se exponen.</p>
+                    </div>
+                    <span class="section-stamp section-stamp-lock">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
+                        Anonimizado
+                    </span>
+                </div>
+
+                <div class="privacy-banner">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 6v5c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6l-8-3Z"></path><path d="m9 12 2 2 4-4"></path></svg>
+                    <div>
+                        <strong>Capa de protección activa</strong>
+                        <p>Los identificadores de cliente y pedido se sustituyen por tokens SHA-256 truncados. Las métricas por cliente se muestran como índice relativo, nunca como importes. El CPL se mantiene enmascarado y no se incluye en las visualizaciones.</p>
+                    </div>
+                </div>
+
+                <div class="kpi-grid kpi-grid-4" id="clientKpis"></div>
+
+                <div class="grid-12">
+                    <article class="card span-5">
+                        <div class="card-head">
+                            <div>
+                                <h3>Clientes por segmento</h3>
+                                <p>Clientes únicos y participación de ventas.</p>
+                            </div>
+                            <span class="card-tag">Agregado</span>
+                        </div>
+                        <div class="bar-list" id="clientSegments"></div>
+                    </article>
+
+                    <article class="card span-7">
+                        <div class="card-head">
+                            <div>
+                                <h3>Clientes por valor relativo</h3>
+                                <p>Alias y tokens irreversibles. El índice 0–100 no revela importes.</p>
+                            </div>
+                            <span class="card-tag">Top 12</span>
+                        </div>
+                        <div class="table-wrap" id="clientTable"></div>
+                    </article>
+
+                    <article class="card span-12">
+                        <div class="card-head">
+                            <div>
+                                <h3>Qué se muestra y qué no</h3>
+                                <p>Controles aplicados sobre la información sensible.</p>
+                            </div>
+                        </div>
+                        <div class="mask-demo" id="maskDemo"></div>
+                    </article>
+                </div>
+            </section>
+
+            <section class="tab-panel" id="tab-metodologia" role="tabpanel" aria-labelledby="tab-btn-metodologia" hidden>
+                <div class="section-head">
+                    <div>
+                        <p class="section-kicker">Transparencia</p>
+                        <h2>Metodología y privacidad</h2>
+                        <p>Cómo se transformó el archivo de Power BI y qué protecciones se aplicaron antes de publicar este panel.</p>
+                    </div>
+                    <span class="section-stamp">v01 · 2026</span>
+                </div>
+
+                <div class="grid-12">
+                    <article class="card span-4">
+                        <div class="principle">
+                            <span class="principle-icon">
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 6v5c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6l-8-3Z"></path></svg>
+                            </span>
+                            <h3>Sin nombres reales</h3>
+                            <p>Los nombres de clientes no se exportaron ni se almacenan en el HTML.</p>
+                        </div>
+                    </article>
+                    <article class="card span-4">
+                        <div class="principle">
+                            <span class="principle-icon">
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"></rect><path d="M8 8h8M8 12h5M8 16h3"></path></svg>
+                            </span>
+                            <h3>Identificadores cifrados</h3>
+                            <p>Customer ID y Order ID se sustituyen por tokens SHA-256 truncados con sal privada.</p>
+                        </div>
+                    </article>
+                    <article class="card span-4">
+                        <div class="principle">
+                            <span class="principle-icon">
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+                            </span>
+                            <h3>CPL enmascarado</h3>
+                            <p>El CPL no está presente en el modelo de origen y queda bloqueado ante futuras incorporaciones.</p>
+                        </div>
+                    </article>
+
+                    <article class="card span-7">
+                        <div class="card-head">
+                            <div>
+                                <h3>Registro de campos</h3>
+                                <p>Tratamiento aplicado a cada campo del modelo.</p>
+                            </div>
+                            <span class="card-tag">Auditoría</span>
+                        </div>
+                        <div class="table-wrap" id="fieldRegistry"></div>
+                    </article>
+
+                    <article class="card span-5">
+                        <div class="card-head">
+                            <div>
+                                <h3>Flujo de construcción</h3>
+                                <p>Del PBIX al panel estático.</p>
+                            </div>
+                        </div>
+                        <ol class="steps">
+                            <li><span>01</span><div><strong>Extracción</strong><p>Lectura del modelo y de la tabla de hechos con 10.194 líneas.</p></div></li>
+                            <li><span>02</span><div><strong>Minimización</strong><p>Exclusión de nombres, direcciones y datos de contacto.</p></div></li>
+                            <li><span>03</span><div><strong>Tokenización</strong><p>Hash SHA-256 truncado para clientes y pedidos.</p></div></li>
+                            <li><span>04</span><div><strong>Agregación</strong><p>Cálculo de KPIs y series desde datos sin PII.</p></div></li>
+                        </ol>
+                        <div class="coverage" id="coverage"></div>
+                    </article>
+
+                    <article class="card span-12">
+                        <div class="card-head">
+                            <div>
+                                <h3>Definiciones de métricas</h3>
+                                <p>Mismas fórmulas del modelo original, calculadas sobre el subconjunto filtrado.</p>
+                            </div>
+                        </div>
+                        <div class="metric-grid">
+                            <div><span>Ventas totales</span><code>SUM(Sales)</code></div>
+                            <div><span>Ganancia total</span><code>SUM(Profit)</code></div>
+                            <div><span>Margen %</span><code>Profit / Sales</code></div>
+                            <div><span>Pedidos</span><code>DISTINCTCOUNT(Order ID)</code></div>
+                            <div><span>Clientes</span><code>DISTINCTCOUNT(Customer ID)</code></div>
+                            <div><span>Ticket promedio</span><code>Sales / Pedidos</code></div>
+                        </div>
+                    </article>
+
+                    <article class="card span-12 privacy-footnote">
+                        <div>
+                            <h3>Nota de alcance</h3>
+                            <p>Este panel es una reconstrucción estática y minimalista del archivo <strong>v01 Actividad_PowerBI.pbix</strong>. No pretende sustituir al modelo original ni habilitar la descarga de microdatos. Cualquier análisis que requiera identificar clientes debe realizarse en un entorno autorizado y con controles de acceso adicionales.</p>
+                        </div>
+                        <button class="btn btn-dark" id="exportBtn2" type="button">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path></svg>
+                            Descargar resumen sin PII
+                        </button>
+                    </article>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <span>Actividad Comercial · Panel estático</span>
+            <span>Fuente: v01 Actividad_PowerBI.pbix · 2023–2026</span>
+            <span>Sin nombres ni importes por cliente</span>
+        </footer>
+    </div>
+
+    <div id="tooltip" class="tooltip" role="tooltip" hidden></div>
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+    <dialog id="modal" class="modal" aria-labelledby="modalTitle">
+        <div class="modal-head">
+            <h2 id="modalTitle">Detalle</h2>
+            <button class="modal-close" id="modalClose" type="button" aria-label="Cerrar">×</button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+    </dialog>
+
+    <noscript>
+        <div class="noscript">Este panel necesita JavaScript para calcular y mostrar las visualizaciones.</div>
+    </noscript>
+
+    <script src="assets/data.js"></script>
+    <script src="assets/app.js"></script>
+</body>
+</html>
