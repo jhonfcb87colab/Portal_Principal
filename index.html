@@ -430,7 +430,8 @@
       gap: 4px;
     }
 
-    .filter {
+    .filter,
+    .repo-filter {
       padding: 6px 10px;
       border: 1px solid var(--border);
       border-radius: 3px;
@@ -442,12 +443,14 @@
       transition: background-color 0.2s ease, border-color 0.2s ease;
     }
 
-    .filter:hover {
+    .filter:hover,
+    .repo-filter:hover {
       border-color: var(--accent);
       background-color: var(--surface-tab-active);
     }
 
-    .filter[aria-pressed="true"] {
+    .filter[aria-pressed="true"],
+    .repo-filter[aria-pressed="true"] {
       padding: 5px 9px;
       border: 2px solid var(--border);
       background-color: var(--surface-tab-active);
@@ -1054,6 +1057,7 @@
       </div>
       <div class="header-actions">
         <button class="btn btn-primary" type="button" data-goto="tab-dashboards">Dashboards Power BI</button>
+        <button class="btn" type="button" data-goto="tab-recursos">Explorar repositorios</button>
         <button class="btn" type="button" data-goto="tab-casos">Explorar casos</button>
         <button class="btn" type="button" id="printDoc">Imprimir</button>
         <button class="btn btn-quiet" type="button" id="copyLink">Copiar enlace</button>
@@ -1088,7 +1092,7 @@
           <button class="tab-button" id="tab-casos" type="button" role="tab" aria-selected="false" aria-controls="panel-casos" tabindex="-1">02 · Casos documentados</button>
           <button class="tab-button" id="tab-dashboards" type="button" role="tab" aria-selected="false" aria-controls="panel-dashboards" tabindex="-1">03 · Dashboards Power BI</button>
           <button class="tab-button" id="tab-metodos" type="button" role="tab" aria-selected="false" aria-controls="panel-metodos" tabindex="-1">04 · Métodos y arquitectura</button>
-          <button class="tab-button" id="tab-recursos" type="button" role="tab" aria-selected="false" aria-controls="panel-recursos" tabindex="-1">05 · Recursos y referencias</button>
+          <button class="tab-button" id="tab-recursos" type="button" role="tab" aria-selected="false" aria-controls="panel-recursos" tabindex="-1">05 · Repositorios y recursos</button>
           <button class="tab-button" id="tab-perfil" type="button" role="tab" aria-selected="false" aria-controls="panel-perfil" tabindex="-1">06 · Perfil y contacto</button>
         </nav>
 
@@ -1473,8 +1477,8 @@
       </section>
 
       <section class="tab-content" id="panel-recursos" role="tabpanel" aria-labelledby="tab-recursos" tabindex="0" hidden>
-        <h2>Recursos y referencias</h2>
-        <p class="panel-intro">Herramientas, fuentes y definiciones de apoyo. Los enlaces externos llevan a documentación oficial o a los repositorios donde se publica el código de cada caso.</p>
+        <h2>Repositorios y recursos</h2>
+        <p class="panel-intro">Catálogo del portafolio de proyectos, herramientas, fuentes y definiciones de apoyo. Los enlaces externos llevan a los repositorios públicos o a la documentación oficial de cada tecnología.</p>
 
         <div class="grid grid-2">
           <article class="card">
@@ -1491,15 +1495,245 @@
           </article>
 
           <article class="card">
+            <span class="kicker">Mapa del portafolio</span>
+            <h3>Un índice para explorar</h3>
+            <p>El catálogo reúne los repositorios compartidos de GitHub y los proyectos con copia local identificada. Cada ficha resume su propósito y enlaza a la fuente publicada.</p>
+            <div class="tag-list">
+              <span class="tag">25 repositorios en GitHub</span>
+              <span class="tag">24 carpetas locales visibles</span>
+            </div>
+          </article>
+          <article class="card">
+            <span class="kicker">Cómo interpretar</span>
+            <h3>Alcance y actualización</h3>
+            <p>Los resúmenes sirven como orientación, no reemplazan el README ni la revisión del código. La lista se construyó con el inventario compartido y la información disponible en las carpetas locales.</p>
+            <p><strong>Nota:</strong> <code>Dev_Repoblamiento</code> aparece en GitHub, pero no en el listado local compartido. Los otros repositorios enlazan a su proyecto público.</p>
+          </article>
+        </div>
+
+        <h3 class="section-sub">Catálogo de repositorios</h3>
+        <p class="panel-intro">Busca por nombre, tecnología o propósito. Las categorías agrupan proyectos de analítica, aplicaciones, aprendizaje y procesamiento especializado.</p>
+
+        <div class="toolbar">
+          <div class="filters" role="group" aria-label="Filtrar repositorios por área">
+            <button class="repo-filter" type="button" data-repo-filter="all" aria-pressed="true">Todos <span class="count">25</span></button>
+            <button class="repo-filter" type="button" data-repo-filter="analytics" aria-pressed="false">Datos y analítica <span class="count">09</span></button>
+            <button class="repo-filter" type="button" data-repo-filter="apps" aria-pressed="false">Aplicaciones y APIs <span class="count">07</span></button>
+            <button class="repo-filter" type="button" data-repo-filter="learning" aria-pressed="false">Aprendizaje y recursos <span class="count">06</span></button>
+            <button class="repo-filter" type="button" data-repo-filter="processing" aria-pressed="false">Procesamiento especializado <span class="count">02</span></button>
+            <button class="repo-filter" type="button" data-repo-filter="portal" aria-pressed="false">Portales <span class="count">01</span></button>
+          </div>
+          <label class="search">
+            <span class="kicker" hidden>Buscar repositorios</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+            <input id="repoSearch" type="search" placeholder="Buscar nombre, tecnología o tema" aria-label="Buscar repositorios por nombre, tecnología o tema">
+          </label>
+        </div>
+        <p class="results" aria-live="polite"><strong id="repoCount">25</strong> repositorios visibles de 25</p>
+
+        <div class="case-grid" id="repoGrid">
+          <article class="case-card repo-card" data-repo-category="analytics" data-search="PROYECTO_DE_GRADO_ML- tesis maestria ciencia de datos prediccion SLA ultima milla logistica databricks duckdb SQL Server XGBoost">
+            <div class="case-top"><span class="tag">Datos y analítica</span><span class="case-year">HTML</span></div>
+            <h3>PROYECTO_DE_GRADO_ML-</h3>
+            <p>Trabajo de maestría en ciencia de datos para estimar tiempos de entrega y cumplimiento de SLA en la última milla.</p>
+            <div class="tag-list"><span class="tag">Machine learning</span><span class="tag">Logística</span><span class="tag">Databricks</span></div>
+            <div class="case-actions"><a class="btn btn-small btn-primary" href="https://github.com/jhonfcb87colab/PROYECTO_DE_GRADO_ML-" target="_blank" rel="noopener noreferrer">Abrir en GitHub</a></div>
+          </article>
+          <article class="case-card repo-card" data-repo-category="analytics" data-search="ProyectoCentinela redes neuronales MLP PyTorch produccion agricola Valle del Cauca datos abiertos">
+            <div class="case-top"><span class="tag">Datos y analítica</span><span class="case-year">HTML</span></div>
+            <h3>ProyectoCentinela</h3>
+            <p>Proyecto de predicción de producción agrícola con una red neuronal MLP y documentación de procedencia, protección de datos y evaluación.</p>
+            <div class="tag-list"><span class="tag">PyTorch</span><span class="tag">MLP</span><span class="tag">Datos abiertos</span></div>
+            <div class="case-actions"><a class="btn btn-small btn-primary" href="https://github.com/jhonfcb87colab/ProyectoCentinela" target="_blank" rel="noopener noreferrer">Abrir en GitHub</a></div>
+          </article>
+          <article class="case-card repo-card" data-repo-category="analytics" data-search="ProyectoVeterinaria clinica veterinaria bases datos estructuradas no estructuradas depuracion analisis">
+            <div class="case-top"><span class="tag">Datos y analítica</span><span class="case-year">Jupyter Notebook</span></div>
+            <h3>ProyectoVeterinaria</h3>
+            <p>Caso de estudio de una clínica veterinaria: extracción y depuración de datos estructurados y no estructurados para su análisis.</p>
+            <div class="tag-list"><span class="tag">Bases de datos</span><span class="tag">Limpieza de datos</span></div>
+            <div class="case-actions"><a class="btn btn-small btn-primary" href="https://github.com/jhonfcb87colab/ProyectoVeterinaria" target="_blank" rel="noopener noreferrer">Abrir en GitHub</a></div>
+          </article>
+          <article class="case-card repo-card" data-repo-category="analytics" data-search="MLOP_APIS_FAST_API MLOps API prediccion Yahoo Finance tendencia financiera Python">
+            <div class="case-top"><span class="tag">Datos y analítica</span><span class="case-year">Python</span></div>
+            <h3>MLOP_APIS_FAST_API</h3>
+            <p>API de predicción financiera que usa datos de Yahoo Finance para estimar la dirección del retorno diario, organizada como proyecto de MLOps.</p>
+            <div class="tag-list"><span class="tag">MLOps</span><span class="tag">FastAPI</span><span class="tag">Machine learning</span></div>
+            <div class="case-actions"><a class="btn btn-small btn-primary" href="https://github.com/jhonfcb87colab/MLOP_APIS_FAST_API" target="_blank" rel="noopener noreferrer">Abrir en GitHub</a></div>
+          </article>
+          <article class="case-card repo-card" data-repo-category="analytics" data-search="MicroProyectosConPolars ejercicios analisis transformacion datos Polars Python CSV notebooks">
+            <div class="case-top"><span class="tag">Datos y analítica</span><span class="case-year">Jupyter Notebook</span></div>
+            <h3>MicroProyectosConPolars</h3>
+            <p>Ejercicios prácticos de análisis y transformación de datos con Polars y Python, usando notebooks y archivos CSV incluidos.</p>
+            <div class="tag-list"><span class="tag">Polars</span><span class="tag">Python</span><span class="tag">CSV</span></div>
+            <div class="case-actions"><a class="btn btn-small btn-primary" href="https://github.com/jhonfcb87colab/MicroProyectosConPolars" target="_blank" rel="noopener noreferrer">Abrir en GitHub</a></div>
+          </article>
+          <article class="case-card repo-card" data-repo-category="analytics" data-search="Dev_pry_SPARK notebooks Apache Spark analisis transformacion datos logisticos">
+            <div class="case-top"><span class="tag">Datos y analítica</span><span class="case-year">Jupyter Notebook</span></div>
+            <h3>Dev_pry_SPARK</h3>
+            <p>Notebooks para analizar y transformar datos logísticos con Apache Spark, con ejemplos de consulta y persistencia de resultados.</p>
+            <div class="tag-list"><span class="tag">Apache Spark</span><span class="tag">SQL</span><span class="tag">Logística</span></div>
+            <div class="case-actions"><a class="btn btn-small btn-primary" href="https://github.com/jhonfcb87colab/Dev_pry_SPARK" target="_blank" rel="noopener noreferrer">Abrir en GitHub</a></div>
+          </article>
+          <article class="case-card repo-card" data-repo-category="analytics" data-search="Dev_ACCESS_Proyectos Access SQL Server Python pyodbc pandas carga datos">
+            <div class="case-top"><span class="tag">Datos y analítica</span><span class="case-year">Python</span></div>
+            <h3>Dev_ACCESS_Proyectos</h3>
+            <p>Scripts de ejemplo para preparar tablas en SQL Server y cargar datos desde Microsoft Access mediante Python.</p>
+            <div class="tag-list"><span class="tag">Microsoft Access</span><span class="tag">SQL Server</span><span class="tag">Pandas</span></div>
+            <div class="case-actions"><a class="btn btn-small btn-primary" href="https://github.com/jhonfcb87colab/Dev_ACCESS_Proyectos" target="_blank" rel="noopener noreferrer">Abrir en GitHub</a></div>
+          </article>
+          <article class="case-card repo-card" data-repo-category="analytics" data-search="NOTEBOOKS_PRUEBAS_CALCULOS SQLite SQL Server Parquet Python consultas bases datos">
+            <div class="case-top"><span class="tag">Datos y analítica</span><span class="case-year">Jupyter Notebook</span></div>
+            <h3>NOTEBOOKS_PRUEBAS_CALCULOS</h3>
+            <p>Cuadernos y módulos de práctica para consultar SQLite y SQL Server, realizar cálculos y exportar datos a Parquet.</p>
+            <div class="tag-list"><span class="tag">SQLite</span><span class="tag">SQL Server</span><span class="tag">Parquet</span></div>
+            <div class="case-actions"><a class="btn btn-small btn-primary" href="https://github.com/jhonfcb87colab/NOTEBOOKS_PRUEBAS_CALCULOS" target="_blank" rel="noopener noreferrer">Abrir en GitHub</a></div>
+          </article>
+          <article class="case-card repo-card" data-repo-category="analytics" data-search="SCRIPTS_SQL TSQL SQL Server scripts consultas">
+            <div class="case-top"><span class="tag">Datos y analítica</span><span class="case-year">TSQL</span></div>
+            <h3>SCRIPTS_SQL</h3>
+            <p>Repositorio de scripts SQL para consulta y reutilización en tareas de bases de datos.</p>
+            <div class="tag-list"><span class="tag">T-SQL</span><span class="tag">SQL Server</span></div>
+            <div class="case-actions"><a class="btn btn-small btn-primary" href="https://github.com/jhonfcb87colab/SCRIPTS_SQL" target="_blank" rel="noopener noreferrer">Abrir en GitHub</a></div>
+          </article>
+
+          <article class="case-card repo-card" data-repo-category="apps" data-search="Proyecto06 BI Web Flask dashboards autoria visualizacion roles permisos SQL bases datos">
+            <div class="case-top"><span class="tag">Aplicaciones y APIs</span><span class="case-year">Python</span></div>
+            <h3>Proyecto06</h3>
+            <p>Incluye BI Web en Flask con capas de autoría y visualización, control de acceso y conexiones a distintos motores; también contiene utilidades de instalación.</p>
+            <div class="tag-list"><span class="tag">Flask</span><span class="tag">BI Web</span><span class="tag">Roles y permisos</span></div>
+            <div class="case-actions"><a class="btn btn-small btn-primary" href="https://github.com/jhonfcb87colab/Proyecto06" target="_blank" rel="noopener noreferrer">Abrir en GitHub</a></div>
+          </article>
+          <article class="case-card repo-card" data-repo-category="apps" data-search="DevAppFinalRepoblar aplicación escritorio cubos BI servicio HTTP SQL Server">
+            <div class="case-top"><span class="tag">Aplicaciones y APIs</span><span class="case-year">Python</span></div>
+            <h3>DevAppFinalRepoblar</h3>
+            <p>Aplicación de escritorio para solicitar repoblamientos de cubos de BI mediante un servicio HTTP interno, con clientes de ejemplo y utilidades de acceso a datos.</p>
+            <div class="tag-list"><span class="tag">Python</span><span class="tag">BI</span><span class="tag">SQL Server</span></div>
+            <div class="case-actions"><a class="btn btn-small btn-primary" href="https://github.com/jhonfcb87colab/DevAppFinalRepoblar" target="_blank" rel="noopener noreferrer">Abrir en GitHub</a></div>
+          </article>
+          <article class="case-card repo-card" data-repo-category="apps" data-search="AppApiRepoblar API HTTP Windows C# SQL Server procedimiento almacenado">
+            <div class="case-top"><span class="tag">Aplicaciones y APIs</span><span class="case-year">C#</span></div>
+            <h3>AppApiRepoblar</h3>
+            <p>Aplicación de consola para Windows que expone un endpoint HTTP y puede ejecutar un procedimiento almacenado de repoblamiento en SQL Server.</p>
+            <div class="tag-list"><span class="tag">C#</span><span class="tag">HTTP</span><span class="tag">SQL Server</span></div>
+            <div class="case-actions"><a class="btn btn-small btn-primary" href="https://github.com/jhonfcb87colab/AppApiRepoblar" target="_blank" rel="noopener noreferrer">Abrir en GitHub</a></div>
+          </article>
+          <article class="case-card repo-card" data-repo-category="apps" data-search="Dev_Repoblamiento API repoblamiento Python">
+            <div class="case-top"><span class="tag">Aplicaciones y APIs</span><span class="case-year">Python · GitHub</span></div>
+            <h3>Dev_Repoblamiento</h3>
+            <p>Repositorio de repoblamiento publicado en GitHub. No figura como carpeta en el listado local compartido.</p>
+            <div class="tag-list"><span class="tag">Python</span><span class="tag">API</span><span class="tag">Solo listado remoto</span></div>
+            <div class="case-actions"><a class="btn btn-small btn-primary" href="https://github.com/jhonfcb87colab/Dev_Repoblamiento" target="_blank" rel="noopener noreferrer">Abrir en GitHub</a></div>
+          </article>
+          <article class="case-card repo-card" data-repo-category="apps" data-search="MicroPoryectos_FAST_API FastAPI ejemplos introductorios API rutas parametros validacion JSON">
+            <div class="case-top"><span class="tag">Aplicaciones y APIs</span><span class="case-year">Python</span></div>
+            <h3>MicroPoryectos_FAST_API</h3>
+            <p>Ejemplos introductorios de APIs con FastAPI, desde rutas simples hasta parámetros validados y cuerpos JSON.</p>
+            <div class="tag-list"><span class="tag">FastAPI</span><span class="tag">REST</span><span class="tag">JSON</span></div>
+            <div class="case-actions"><a class="btn btn-small btn-primary" href="https://github.com/jhonfcb87colab/MicroPoryectos_FAST_API" target="_blank" rel="noopener noreferrer">Abrir en GitHub</a></div>
+          </article>
+          <article class="case-card repo-card" data-repo-category="apps" data-search="Dev_Streamlit_02_formulario Streamlit guias envio registros SQLite">
+            <div class="case-top"><span class="tag">Aplicaciones y APIs</span><span class="case-year">Python</span></div>
+            <h3>Dev_Streamlit_02_formulario</h3>
+            <p>Aplicación Streamlit para registrar guías de envío y consultar la información guardada en SQLite.</p>
+            <div class="tag-list"><span class="tag">Streamlit</span><span class="tag">SQLite</span><span class="tag">Formularios</span></div>
+            <div class="case-actions"><a class="btn btn-small btn-primary" href="https://github.com/jhonfcb87colab/Dev_Streamlit_02_formulario" target="_blank" rel="noopener noreferrer">Abrir en GitHub</a></div>
+          </article>
+          <article class="case-card repo-card" data-repo-category="apps" data-search="Dev_SAP_Facturacion SAP facturacion CEBE centros beneficio SQL Server archivos">
+            <div class="case-top"><span class="tag">Aplicaciones y APIs</span><span class="case-year">C#</span></div>
+            <h3>Dev_SAP_Facturacion</h3>
+            <p>Herramientas para consultar servicios SAP de facturación y centros de beneficio, y guardar resultados en SQL Server o archivos delimitados.</p>
+            <div class="tag-list"><span class="tag">SAP</span><span class="tag">Facturación</span><span class="tag">SQL Server</span></div>
+            <div class="case-actions"><a class="btn btn-small btn-primary" href="https://github.com/jhonfcb87colab/Dev_SAP_Facturacion" target="_blank" rel="noopener noreferrer">Abrir en GitHub</a></div>
+          </article>
+
+          <article class="case-card repo-card" data-repo-category="learning" data-search="Dev_Proyectos ejemplos proyectos Python C# .NET SSIS web desarrollo">
+            <div class="case-top"><span class="tag">Aprendizaje y recursos</span><span class="case-year">C#</span></div>
+            <h3>Dev_Proyectos</h3>
+            <p>Repositorio contenedor de ejemplos y proyectos de desarrollo en Python, C#/.NET, SSIS y tecnologías web, organizados en carpetas independientes.</p>
+            <div class="tag-list"><span class="tag">Python</span><span class="tag">.NET</span><span class="tag">SSIS</span></div>
+            <div class="case-actions"><a class="btn btn-small btn-primary" href="https://github.com/jhonfcb87colab/Dev_Proyectos" target="_blank" rel="noopener noreferrer">Abrir en GitHub</a></div>
+          </article>
+          <article class="case-card repo-card" data-repo-category="learning" data-search="Dev_Py_RedesNeuronales aprendizaje ejemplos redes neuronales Python aplicaciones escritorio">
+            <div class="case-top"><span class="tag">Aprendizaje y recursos</span><span class="case-year">Python</span></div>
+            <h3>Dev_Py_RedesNeuronales</h3>
+            <p>Ejemplos independientes para aprender redes neuronales y crear pequeñas aplicaciones de escritorio en Python.</p>
+            <div class="tag-list"><span class="tag">Python</span><span class="tag">Redes neuronales</span></div>
+            <div class="case-actions"><a class="btn btn-small btn-primary" href="https://github.com/jhonfcb87colab/Dev_Py_RedesNeuronales" target="_blank" rel="noopener noreferrer">Abrir en GitHub</a></div>
+          </article>
+          <article class="case-card repo-card" data-repo-category="learning" data-search="COMANDOS_BASH_SHELL apuntes ejemplos comandos desarrollo Linux Git MLOps">
+            <div class="case-top"><span class="tag">Aprendizaje y recursos</span><span class="case-year">Guías</span></div>
+            <h3>COMANDOS_BASH_SHELL</h3>
+            <p>Apuntes y ejemplos de comandos para desarrollo, Linux, Git y flujos de trabajo de MLOps.</p>
+            <div class="tag-list"><span class="tag">Bash</span><span class="tag">Linux</span><span class="tag">Git</span></div>
+            <div class="case-actions"><a class="btn btn-small btn-primary" href="https://github.com/jhonfcb87colab/COMANDOS_BASH_SHELL" target="_blank" rel="noopener noreferrer">Abrir en GitHub</a></div>
+          </article>
+          <article class="case-card repo-card" data-repo-category="learning" data-search="SCRIPTS_PYTHON scripts Python">
+            <div class="case-top"><span class="tag">Aprendizaje y recursos</span><span class="case-year">Jupyter Notebook</span></div>
+            <h3>SCRIPTS_PYTHON</h3>
+            <p>Repositorio de scripts y materiales en Python para consulta y reutilización.</p>
+            <div class="tag-list"><span class="tag">Python</span><span class="tag">Scripts</span></div>
+            <div class="case-actions"><a class="btn btn-small btn-primary" href="https://github.com/jhonfcb87colab/SCRIPTS_PYTHON" target="_blank" rel="noopener noreferrer">Abrir en GitHub</a></div>
+          </article>
+          <article class="case-card repo-card" data-repo-category="learning" data-search="ProyectoUniversidades proyecto academico universidades Jupyter Notebook">
+            <div class="case-top"><span class="tag">Aprendizaje y recursos</span><span class="case-year">Jupyter Notebook</span></div>
+            <h3>ProyectoUniversidades</h3>
+            <p>Repositorio académico asociado a trabajos universitarios y materiales de análisis en notebooks.</p>
+            <div class="tag-list"><span class="tag">Académico</span><span class="tag">Jupyter Notebook</span></div>
+            <div class="case-actions"><a class="btn btn-small btn-primary" href="https://github.com/jhonfcb87colab/ProyectoUniversidades" target="_blank" rel="noopener noreferrer">Abrir en GitHub</a></div>
+          </article>
+          <article class="case-card repo-card" data-repo-category="learning" data-search="SKILLS_IA skills inteligencia artificial instrucciones agentes IA">
+            <div class="case-top"><span class="tag">Aprendizaje y recursos</span><span class="case-year">Guías</span></div>
+            <h3>SKILLS_IA</h3>
+            <p>Conjunto de skills e instrucciones para organizar tareas asistidas por inteligencia artificial.</p>
+            <div class="tag-list"><span class="tag">IA</span><span class="tag">Documentación</span><span class="tag">Skills</span></div>
+            <div class="case-actions"><a class="btn btn-small btn-primary" href="https://github.com/jhonfcb87colab/SKILLS_IA" target="_blank" rel="noopener noreferrer">Abrir en GitHub</a></div>
+          </article>
+
+          <article class="case-card repo-card" data-repo-category="processing" data-search="Dev_Py_pruebas_procesar_img OCR imagenes guias codigos barras devoluciones Python">
+            <div class="case-top"><span class="tag">Procesamiento especializado</span><span class="case-year">Jupyter Notebook</span></div>
+            <h3>Dev_Py_pruebas_procesar_img</h3>
+            <p>Pruebas de lectura de imágenes de guías, detección de códigos de barras y reconocimiento OCR para identificar referencias y devoluciones.</p>
+            <div class="tag-list"><span class="tag">OpenCV</span><span class="tag">OCR</span><span class="tag">Códigos de barras</span></div>
+            <div class="case-actions"><a class="btn btn-small btn-primary" href="https://github.com/jhonfcb87colab/Dev_Py_pruebas_procesar_img" target="_blank" rel="noopener noreferrer">Abrir en GitHub</a></div>
+          </article>
+          <article class="case-card repo-card" data-repo-category="processing" data-search="Procesador-de-imagenes-OPENCV procesamiento imágenes OpenCV">
+            <div class="case-top"><span class="tag">Procesamiento especializado</span><span class="case-year">Jupyter Notebook</span></div>
+            <h3>Procesador-de-imagenes-OPENCV</h3>
+            <p>Repositorio dedicado a pruebas y procesamiento de imágenes con OpenCV.</p>
+            <div class="tag-list"><span class="tag">OpenCV</span><span class="tag">Imágenes</span></div>
+            <div class="case-actions"><a class="btn btn-small btn-primary" href="https://github.com/jhonfcb87colab/Procesador-de-imagenes-OPENCV" target="_blank" rel="noopener noreferrer">Abrir en GitHub</a></div>
+          </article>
+
+          <article class="case-card repo-card" data-repo-category="portal" data-search="Portal_Principal portal principal repositorios documentación dashboards HTML">
+            <div class="case-top"><span class="tag">Portales</span><span class="case-year">HTML</span></div>
+            <h3>Portal_Principal</h3>
+            <p>Portal de entrada que reúne documentación técnica, casos y dashboards de los repositorios.</p>
+            <div class="tag-list"><span class="tag">HTML</span><span class="tag">Documentación</span><span class="tag">Dashboards</span></div>
+            <div class="case-actions"><a class="btn btn-small btn-primary" href="https://github.com/jhonfcb87colab/Portal_Principal" target="_blank" rel="noopener noreferrer">Abrir en GitHub</a></div>
+          </article>
+        </div>
+        <div class="empty-state" id="repoEmpty" hidden>
+          <p>No hay repositorios que coincidan con la búsqueda o el área seleccionada.</p>
+          <button class="btn" type="button" id="clearRepoFilters">Limpiar búsqueda y filtros</button>
+        </div>
+
+        <div class="grid grid-2">
+          <article class="card">
             <span class="kicker">Fuentes primarias</span>
-            <h3>Repositorios de los casos</h3>
+            <h3>Dashboards documentados</h3>
             <ul class="list">
-              <li><a href="https://github.com/jhonfcb87colab/PROYECTO_DE_GRADO_ML-" target="_blank" rel="noopener noreferrer">Predicción de SLA en última milla</a></li>
-              <li><a href="https://github.com/jhonfcb87colab/ProyectoCentinela" target="_blank" rel="noopener noreferrer">Proyecto Centinela</a></li>
-              <li><a href="https://github.com/jhonfcb87colab/Proyecto06" target="_blank" rel="noopener noreferrer">BI Web con roles y SQL</a></li>
-              <li><a href="https://github.com/jhonfcb87colab/DevAppFinalRepoblar" target="_blank" rel="noopener noreferrer">Repoblamiento BI de escritorio</a></li>
-              <li><a href="https://github.com/jhonfcb87colab/Dev_Repoblamiento" target="_blank" rel="noopener noreferrer">API de repoblamiento</a></li>
-              <li><a href="https://github.com/jhonfcb87colab/Dev_Py_pruebas_procesar_img" target="_blank" rel="noopener noreferrer">OCR de guías logísticas</a></li>
+              <li><a href="Inventarios.html">Comportamiento de almacenamiento e inventarios</a></li>
+              <li><a href="Indicadores.html">Observatorio de indicadores logísticos</a></li>
+              <li><a href="VentasIndicadoresComercial.html">Actividad comercial y ventas agregadas</a></li>
+            </ul>
+          </article>
+          <article class="card">
+            <span class="kicker">Lectura recomendada</span>
+            <h3>Cómo navegar el catálogo</h3>
+            <ul class="list">
+              <li>Filtra por área o busca por nombre, lenguaje o tecnología.</li>
+              <li>Abre cada repositorio para consultar su README, estructura y licencia.</li>
+              <li>Para los casos desarrollados en detalle, revisa también la pestaña «Casos documentados».</li>
             </ul>
           </article>
         </div>
@@ -1794,6 +2028,71 @@
           });
           applyFilters();
           if (searchInput) searchInput.focus();
+        });
+      }
+
+      const repoFilterButtons = Array.from(document.querySelectorAll('.repo-filter'));
+      const repoCards = Array.from(document.querySelectorAll('#repoGrid .repo-card'));
+      const repoSearch = document.getElementById('repoSearch');
+      const repoCount = document.getElementById('repoCount');
+      const repoEmpty = document.getElementById('repoEmpty');
+      const clearRepoFilters = document.getElementById('clearRepoFilters');
+      let activeRepoFilter = 'all';
+
+      function applyRepoFilters() {
+        const term = normalize(repoSearch ? repoSearch.value : '');
+        let visible = 0;
+
+        repoCards.forEach(function (card) {
+          const matchesCategory = activeRepoFilter === 'all' ||
+            card.dataset.repoCategory === activeRepoFilter;
+          const searchable = normalize(card.dataset.search || card.textContent);
+          const matchesSearch = !term || searchable.indexOf(term) !== -1;
+          const show = matchesCategory && matchesSearch;
+          card.hidden = !show;
+          if (show) visible += 1;
+        });
+
+        repoFilterButtons.forEach(function (button) {
+          const filter = button.dataset.repoFilter;
+          const total = filter === 'all'
+            ? repoCards.length
+            : repoCards.filter(function (card) {
+                return card.dataset.repoCategory === filter;
+              }).length;
+          const counter = button.querySelector('.count');
+          if (counter) counter.textContent = pad(total);
+        });
+
+        if (repoCount) repoCount.textContent = pad(visible);
+        if (repoEmpty) repoEmpty.hidden = visible !== 0;
+      }
+
+      applyRepoFilters();
+
+      repoFilterButtons.forEach(function (button) {
+        button.addEventListener('click', function () {
+          activeRepoFilter = button.dataset.repoFilter || 'all';
+          repoFilterButtons.forEach(function (item) {
+            item.setAttribute('aria-pressed', String(item === button));
+          });
+          applyRepoFilters();
+        });
+      });
+
+      if (repoSearch) {
+        repoSearch.addEventListener('input', applyRepoFilters);
+      }
+
+      if (clearRepoFilters) {
+        clearRepoFilters.addEventListener('click', function () {
+          activeRepoFilter = 'all';
+          if (repoSearch) repoSearch.value = '';
+          repoFilterButtons.forEach(function (item) {
+            item.setAttribute('aria-pressed', String(item.dataset.repoFilter === 'all'));
+          });
+          applyRepoFilters();
+          if (repoSearch) repoSearch.focus();
         });
       }
 
