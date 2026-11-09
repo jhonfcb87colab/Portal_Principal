@@ -9,18 +9,18 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%23FFFAFA' stroke='%23B0C4DE' stroke-width='3'/%3E%3Ctext x='32' y='42' font-family='Arial' font-size='24' font-weight='600' fill='%23000000' text-anchor='middle'%3Ejf%3C/text%3E%3C/svg%3E">
   <style>
     :root {
-      --bg: #FFFAFA;
+      --bg: #F4F8FA;
       --surface: #FFFFFF;
-      --surface-tab: #FAF0E6;
-      --surface-tab-active: #FFFFE0;
-      --surface-panel: #F5FFFA;
-      --surface-note: #FFFFE0;
-      --border: #B0C4DE;
-      --border-soft: #B0E0E6;
-      --accent: #7FFFD4;
-      --ink: #000000;
-      --ink-soft: #333333;
-      --ink-muted: #555555;
+      --surface-tab: #E5EDF1;
+      --surface-tab-active: #F0F5F8;
+      --surface-panel: #FFFFFF;
+      --surface-note: #F0F5F8;
+      --border: #96C2DB;
+      --border-soft: #E5EDF1;
+      --accent: #5B9EC2;
+      --ink: #1C2833;
+      --ink-soft: #2C3E50;
+      --ink-muted: #4A607A;
     }
 
     *,
@@ -87,12 +87,12 @@
 
     .main-container {
       width: 100%;
-      max-width: 1040px;
+      max-width: 1420px;
       padding: 24px;
       border: 2px solid var(--border);
-      border-radius: 6px;
+      border-radius: 10px;
       background-color: var(--surface);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      box-shadow: 0 16px 42px rgba(44, 62, 80, 0.08);
     }
 
     .doc-header {
@@ -188,13 +188,16 @@
 
     .tabs-nav {
       display: flex;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: thin;
       gap: 6px;
       margin-bottom: 18px;
       border-bottom: 2px solid var(--border);
     }
 
     .tab-button {
+      flex: 0 0 auto;
       padding: 10px 16px;
       border: 1px solid var(--border);
       border-bottom: none;
@@ -281,8 +284,16 @@
     .card {
       padding: 16px;
       border: 1px solid var(--border-soft);
-      border-radius: 4px;
+      border-radius: 8px;
       background-color: var(--surface);
+      box-shadow: 0 3px 12px rgba(44, 62, 80, 0.04);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    .card:hover {
+      border-color: var(--border);
+      box-shadow: 0 8px 20px rgba(44, 62, 80, 0.08);
+      transform: translateY(-2px);
     }
 
     .card p {
@@ -687,6 +698,100 @@
       margin: 0;
     }
 
+    .portal-layout {
+      display: grid;
+      grid-template-columns: 232px minmax(0, 1fr);
+      align-items: start;
+      gap: 22px;
+    }
+
+    .portal-sidebar {
+      position: sticky;
+      top: 16px;
+      padding: 18px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: linear-gradient(160deg, var(--surface-tab-active), var(--surface));
+      box-shadow: 0 6px 20px rgba(44, 62, 80, 0.06);
+    }
+
+    .sidebar-heading {
+      margin: 0 0 4px;
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .sidebar-caption {
+      margin: 0 0 14px;
+      color: var(--ink-muted);
+      font-size: 11px;
+      line-height: 1.45;
+    }
+
+    .sidebar-links {
+      display: grid;
+      gap: 8px;
+    }
+
+    .sidebar-link {
+      display: grid;
+      grid-template-columns: 30px minmax(0, 1fr);
+      align-items: center;
+      gap: 9px;
+      padding: 9px;
+      border: 1px solid var(--border-soft);
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--ink);
+      text-decoration: none;
+      transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .sidebar-link:hover {
+      border-color: var(--accent);
+      background: var(--surface-tab-active);
+      transform: translateX(2px);
+    }
+
+    .sidebar-icon {
+      display: grid;
+      width: 30px;
+      height: 30px;
+      place-items: center;
+      border-radius: 6px;
+      background: var(--surface-tab);
+      color: var(--ink-soft);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .sidebar-link strong,
+    .sidebar-link small {
+      display: block;
+    }
+
+    .sidebar-link strong {
+      font-size: 11px;
+      font-weight: 600;
+      line-height: 1.35;
+    }
+
+    .sidebar-link small {
+      margin-top: 2px;
+      color: var(--ink-muted);
+      font-size: 10px;
+      line-height: 1.35;
+    }
+
+    .portal-content {
+      min-width: 0;
+    }
+
+    .portal-content .tabs-nav {
+      margin-top: 2px;
+    }
+
     .action-status {
       margin: 8px 0 0;
       color: var(--ink-muted);
@@ -793,6 +898,18 @@
     }
 
     @media (max-width: 860px) {
+      .portal-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .portal-sidebar {
+        position: static;
+      }
+
+      .sidebar-links {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
       .doc-header {
         flex-direction: column;
       }
@@ -844,6 +961,10 @@
 
       .tab-button[aria-selected="true"] {
         padding: 8px 11px;
+      }
+
+      .sidebar-links {
+        grid-template-columns: 1fr;
       }
     }
 
@@ -938,18 +1059,40 @@
         <button class="btn btn-quiet" type="button" id="copyLink">Copiar enlace</button>
       </div>
     </header>
-    <p class="action-status" id="actionStatus" role="status" aria-live="polite"></p>
+    <div class="portal-layout">
+      <aside class="portal-sidebar" aria-label="Accesos directos a dashboards">
+        <p class="kicker">Acceso rápido</p>
+        <h2 class="sidebar-heading">Dashboards</h2>
+        <p class="sidebar-caption">Abre una vista interactiva del portal.</p>
+        <nav class="sidebar-links" aria-label="Dashboards disponibles">
+          <a class="sidebar-link" href="Indicadores.html">
+            <span class="sidebar-icon" aria-hidden="true">01</span>
+            <span><strong>Indicadores logísticos</strong><small>Operación y niveles de servicio</small></span>
+          </a>
+          <a class="sidebar-link" href="Inventarios.html">
+            <span class="sidebar-icon" aria-hidden="true">02</span>
+            <span><strong>Inventarios</strong><small>Almacenamiento y vejez</small></span>
+          </a>
+          <a class="sidebar-link" href="VentasIndicadoresComercial.html">
+            <span class="sidebar-icon" aria-hidden="true">03</span>
+            <span><strong>Actividad comercial</strong><small>Ventas y tendencias agregadas</small></span>
+          </a>
+        </nav>
+      </aside>
 
-    <nav class="tabs-nav" role="tablist" aria-label="Módulos del documento">
-      <button class="tab-button" id="tab-presentacion" type="button" role="tab" aria-selected="true" aria-controls="panel-presentacion" tabindex="0">01 · Presentación</button>
-      <button class="tab-button" id="tab-casos" type="button" role="tab" aria-selected="false" aria-controls="panel-casos" tabindex="-1">02 · Casos documentados</button>
-      <button class="tab-button" id="tab-dashboards" type="button" role="tab" aria-selected="false" aria-controls="panel-dashboards" tabindex="-1">03 · Dashboards Power BI</button>
-      <button class="tab-button" id="tab-metodos" type="button" role="tab" aria-selected="false" aria-controls="panel-metodos" tabindex="-1">04 · Métodos y arquitectura</button>
-      <button class="tab-button" id="tab-recursos" type="button" role="tab" aria-selected="false" aria-controls="panel-recursos" tabindex="-1">05 · Recursos y referencias</button>
-      <button class="tab-button" id="tab-perfil" type="button" role="tab" aria-selected="false" aria-controls="panel-perfil" tabindex="-1">06 · Perfil y contacto</button>
-    </nav>
+      <div class="portal-content">
+        <p class="action-status" id="actionStatus" role="status" aria-live="polite"></p>
 
-    <main id="contenido">
+        <nav class="tabs-nav" role="tablist" aria-label="Módulos del documento">
+          <button class="tab-button" id="tab-presentacion" type="button" role="tab" aria-selected="true" aria-controls="panel-presentacion" tabindex="0">01 · Presentación</button>
+          <button class="tab-button" id="tab-casos" type="button" role="tab" aria-selected="false" aria-controls="panel-casos" tabindex="-1">02 · Casos documentados</button>
+          <button class="tab-button" id="tab-dashboards" type="button" role="tab" aria-selected="false" aria-controls="panel-dashboards" tabindex="-1">03 · Dashboards Power BI</button>
+          <button class="tab-button" id="tab-metodos" type="button" role="tab" aria-selected="false" aria-controls="panel-metodos" tabindex="-1">04 · Métodos y arquitectura</button>
+          <button class="tab-button" id="tab-recursos" type="button" role="tab" aria-selected="false" aria-controls="panel-recursos" tabindex="-1">05 · Recursos y referencias</button>
+          <button class="tab-button" id="tab-perfil" type="button" role="tab" aria-selected="false" aria-controls="panel-perfil" tabindex="-1">06 · Perfil y contacto</button>
+        </nav>
+
+        <main id="contenido">
       <section class="tab-content" id="panel-presentacion" role="tabpanel" aria-labelledby="tab-presentacion" tabindex="0">
         <h2>Presentación</h2>
         <p class="panel-intro">Este espacio reúne apuntes, procedimientos y casos de estudio sobre el trabajo con datos. La intención es documentar decisiones y aprendizajes de forma que puedan consultarse, discutirse o reutilizarse en otros contextos.</p>
@@ -1459,7 +1602,9 @@
           </div>
         </details>
       </section>
-    </main>
+        </main>
+      </div>
+    </div>
 
     <footer class="doc-footer">
       <p>Documento de divulgación mantenido por Jhon Fernando Cruz. Contenido educativo; se permite la cita con atribución.</p>
